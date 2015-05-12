@@ -13,4 +13,4 @@ C:\Windows\System32\Inetsrv\Appcmd.exe set config -section:system.webServer/http
 C:\Windows\System32\Inetsrv\Appcmd.exe set config -section:system.webServer/httpCompression /+"dynamicTypes.[mimeType='*/*',enabled='False']" /commit:apphost
 
 REM Install IIS UrlRewrite 2 module
-@powershell -NoProfile -ExecutionPolicy unrestricted .\UrlRewrite.ps1
+@powershell -NoProfile -ExecutionPolicy unrestricted %~dp0\UrlRewrite.ps1
