@@ -1,1 +1,1 @@
-"C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe" /Source:%1 /Dest:%2 /SourceKey:%3 /DestKey:%4 /S
+"%programfiles(x86)%\Microsoft SDKs\Azure\AzCopy\AzCopy.exe" /Source:%1 /Dest:%2 /SourceKey:%3 /DestKey:%4 /S
