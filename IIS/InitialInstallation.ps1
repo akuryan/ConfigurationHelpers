@@ -3,7 +3,7 @@ Add-WindowsFeature NET-Framework-Core
 #Credits of next going code is http://www.tugberkugurlu.com/archive/script-out-everything-initialize-your-windows-azure-vm-for-your-web-server-with-iis-web-deploy-and-other-stuff
 
 #add additional windows features
-$additionalFeatures = @('Web-Mgmt-Service', 'Web-Asp-Net45', 'Web-Dyn-Compression', 'Web-Scripting-Tools')
+$additionalFeatures = @('Web-Mgmt-Service', 'Web-Asp-Net45', 'Web-Dyn-Compression', 'Web-Scripting-Tools', 'Web-Http-Errors', 'Web-Static-Content', 'Web-Http-Redirect', 'Web-Http-Logging', 'Web-Basic-Auth', 'Web-AppInit', 'Web-Mgmt-Console')
 foreach($feature in $additionalFeatures) { 
     
     if(!(Get-WindowsFeature | where { $_.Name -eq $feature }).Installed) { 
