@@ -40,8 +40,8 @@ REM Allowing compression for HTTP 1.0 and Proxies (as, for example, CloudFront u
 %windir%\System32\Inetsrv\Appcmd.exe set config -section:httpCompression -noCompressionForHttp10:False /commit:apphost
 %windir%\System32\Inetsrv\Appcmd.exe set config -section:httpCompression -noCompressionForProxies:False /commit:apphost
 
-REM Install IIS UrlRewrite 2 module
-@powershell -NoProfile -ExecutionPolicy unrestricted %~dp0\UrlRewrite.ps1
+REM Install IIS modules (Url Rewrite 2 and Webdeploy)
+@powershell -NoProfile -ExecutionPolicy unrestricted %~dp0\IISModules.ps1
 
 REM TODO: Add scheduling for CleanupScript
 REM TODO: Add deployer user creation
@@ -54,3 +54,8 @@ C:\Windows\Microsoft.NET\Framework64\v2.0.50727\aspnet_regiis.exe -iru
 
 REM WmSvc should have write access on C:\Windows\System32\inetsrv\config\applicationhost.config.
 REM WDeployConfigWriter and WDeployAdmin windows users should have 'Password never expires' checkboxes checked, as stated here http://blogs.technet.com/b/bernhard_frank/archive/2011/11/03/webmatrix-check-compatibility-shows-exclamation-mark-and-states-asp-net-version-not-available.aspx
+
+REM Install choco
+@powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
+REM Install notepad++
+choco install notepadplusplus
