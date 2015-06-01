@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">>
+  <system.applicationHost>
+    <applicationPools>
+      <add name="uatthingstodo"  managedPipelineMode="Integrated" managedRuntimeVersion="v4.0" xdt:Locator="Match(name)" xdt:Transform="SetAttributes(managedPipelineMode,managedRuntimeVersion)" >
+                <recycling xdt:Transform="Insert">
+                    <periodicRestart>
+                        <schedule>
+                            <clear />
+                            <add value="04:21:00" />
+                        </schedule>
+                    </periodicRestart>
+                </recycling>		
+      </add>
+    </applicationPools>
+  </system.applicationHost>
+</configuration>
