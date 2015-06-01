@@ -25,7 +25,7 @@
 	   $url = "http://go.microsoft.com/fwlink/?LinkID=309495"       
 	}  
 	$wc.DownloadFile($url, $dest)  
-	msiexec.exe /i webdeploy.ms
+	msiexec.exe /i webdeploy.msi
 }
  
  if (!(Test-Path "$env:programfiles\Reference Assemblies\Microsoft\IIS\Microsoft.Web.Iis.Rewrite.dll")){  
