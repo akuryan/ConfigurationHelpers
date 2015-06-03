@@ -11,6 +11,8 @@ Get-AzureSubscription -SubscriptionName "mysubscriptionname" | Select-AzureSubsc
 
 # Create a Public Reserved IP for SQL AlwaysOn Listener IP
 $ReservedIP = New-AzureReservedIP -ReservedIPName "SCSQLAlwaysOnListenerIP" -Label "SCSQLAlwaysOnListenerIP" -Location "West Europe"
+#Create a Public Reserved IP for standalone machine
+$ReservedIP2 = New-AzureReservedIP -ReservedIPName "SCSQLAlwaysOnListenerIP2" -Label "SCSQLAlwaysOnListenerIP2" -Location "West Europe"
 
 $workingDir = (Get-Location).Path
 
@@ -42,7 +44,7 @@ $vnetname = "myvnet-prod"
 
 # Re-create VMs in specified order
 $vmNames = 'az-scsqlquorum', 'az-scsql01', 'az-scsql02'
-
+Set-AzureSubscription -SubscriptionName "mysubscriptionname" -CurrentStorageAccountname "mystorageaccountname"
 ForEach ($vmName in $vmNames) {
 
     $vmConfigurationPath = $workingDir + "\exportedVM_" + $vmName +".xml"
@@ -51,3 +53,6 @@ ForEach ($vmName in $vmNames) {
     New-AzureVM -ServiceName $serviceName -VMs $vmConfig -VNetName $vnetname -ReservedIPName $ReservedIP.ReservedIPName -WaitForBoot:$false
 
 }
+
+#Assign reserved IP to Standalone machine
+Get-AzureVM -ServiceName $serviceName -Name az-scsqlquorum | Set-AzurePublicIP -PublicIPName SCSQLAlwaysOnListenerIP2 | Update-AzureVM
