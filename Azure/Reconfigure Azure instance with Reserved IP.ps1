@@ -54,5 +54,5 @@ ForEach ($vmName in $vmNames) {
 
 }
 
-#Assign reserved IP to Standalone machine
+#Assign static IP to Standalone machine
 Get-AzureVM -ServiceName $serviceName -Name az-scsqlquorum | Set-AzurePublicIP -PublicIPName SCSQLAlwaysOnListenerIP2 | Update-AzureVM
