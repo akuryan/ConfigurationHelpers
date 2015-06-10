@@ -68,3 +68,8 @@ REM Install notepad++
 choco install notepadplusplus
 REM choco webpi UrlRewrite2 - for some reason it can fail
 REM Add firewall configuration rules
+
+REM Adding compression to logs folder
+compact /c C:\inetpub\logs
+compact /c C:\inetpub\logs\wmsvc
+compact /c C:\inetpub\logs\FailedReqLogFiles
