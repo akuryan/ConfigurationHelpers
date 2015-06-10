@@ -35,4 +35,4 @@
       Write-Host "IIS Rewrite Module - Already Installed..." -ForegroundColor Green  
  }  
  
- InstallWebDeploy
+InstallWebDeploy
