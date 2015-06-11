@@ -1,0 +1,81 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "networkSecurityGroupName": {
+            "type": "string",
+            "defaultValue": "myNSG"
+        }
+    },
+    "variables": {
+		"apiVersionString": "2015-05-01-preview",
+    },
+    "resources": [
+		{
+			"apiVersion": "[variables('apiVersionString')]",
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"name": "[parameters('networkSecurityGroupName')]",
+			"location": "[resourceGroup().location]",
+			"properties": {
+				"securityRules": [
+				{
+					"name": "Allow_Http_From_World",
+					"properties": {
+						"description": "Allow Http from World",
+						"protocol": "*",
+						"sourcePortRange": "*",
+						"destinationPortRange": "80",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 300,
+						"direction": "Inbound"
+					}
+				},
+				{
+					"name": "Allow_Https_From_World",
+					"properties": {
+						"description": "Allow Https from World",
+						"protocol": "*",
+						"sourcePortRange": "*",
+						"destinationPortRange": "443",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 301,
+						"direction": "Inbound"
+					}
+				},
+				{
+					"name": "Allow_81_From_World",
+					"properties": {
+						"description": "Allow Http from World",
+						"protocol": "*",
+						"sourcePortRange": "*",
+						"destinationPortRange": "81",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 300,
+						"direction": "Inbound"
+					}
+				},				
+				{
+					"name": "Allow_Ftps_From_World",
+					"properties": {
+						"description": "Allow Https from World",
+						"protocol": "*",
+						"sourcePortRange": "*",
+						"destinationPortRange": "990",
+						"sourceAddressPrefix": "*",
+						"destinationAddressPrefix": "*",
+						"access": "Allow",
+						"priority": 303,
+						"direction": "Inbound"
+					}
+				}
+				],
+			}
+		},
+    ]
+}
