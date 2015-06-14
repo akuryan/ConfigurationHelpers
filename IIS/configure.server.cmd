@@ -70,6 +70,9 @@ REM choco webpi UrlRewrite2 - for some reason it can fail
 REM Add firewall configuration rules
 
 REM Adding compression to logs folder
-compact /c C:\inetpub\logs
-compact /c C:\inetpub\logs\wmsvc
-compact /c C:\inetpub\logs\FailedReqLogFiles
+compact /c C:\inetpub\logs\
+
+REM Set updates to be only downloaded
+net stop wuauserv
+reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f
+net start wuauserv
