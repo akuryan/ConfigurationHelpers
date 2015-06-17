@@ -1,6 +1,12 @@
 REM Checks and installs IIS on server and adds static and dynamic compression modules
 @powershell -NoProfile -ExecutionPolicy unrestricted %~dp0\InitialInstallation.ps1
 @powershell -NoProfile -ExecutionPolicy unrestricted %~dp0\IISAndCompressionModule.ps1
+REM Setting application pools default
+%windir%\System32\Inetsrv\Appcmd.exe set config -section:system.applicationHost/applicationPools /applicationPoolDefaults.processModel.idleTimeout:0.00:00:00 /commit:apphost
+%windir%\System32\Inetsrv\Appcmd.exe set config  -section:system.applicationHost/applicationPools /applicationPoolDefaults.recycling.periodicRestart.time:"00:00:00"  /commit:apphost
+SET /A hours=%RANDOM% * 5 / 32768 + 1
+SET /A minutes=%RANDOM% * 60 / 32768 + 1
+%windir%\System32\Inetsrv\Appcmd.exe set config  -section:system.applicationHost/applicationPools /+"applicationPoolDefaults.recycling.periodicRestart.schedule.[value='%hours%:%minutes%:00']" /commit:apphost
 REM Enable IIS compression
 %windir%\System32\Inetsrv\Appcmd.exe unlock config /section:system.webserver/httpCompression /commit:apphost
 %windir%\System32\Inetsrv\Appcmd.exe set config -section:httpCompression -[name='gzip'].staticCompressionLevel:9 -[name='gzip'].dynamicCompressionLevel:4 /commit:apphost
