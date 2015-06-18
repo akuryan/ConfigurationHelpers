@@ -1,0 +1,221 @@
+Missing Indexes:
+
+SELECT
+  migs.avg_total_user_cost * (migs.avg_user_impact / 100.0) * (migs.user_seeks + migs.user_scans) AS improvement_measure,
+  'CREATE INDEX [missing_index_' + CONVERT (varchar, mig.index_group_handle) + '_' + CONVERT (varchar, mid.index_handle)
+  + '_' + LEFT (PARSENAME(mid.statement, 1), 32) + ']'
+  + ' ON ' + mid.statement
+  + ' (' + ISNULL (mid.equality_columns,'')
+    + CASE WHEN mid.equality_columns IS NOT NULL AND mid.inequality_columns IS NOT NULL THEN ',' ELSE '' END
+    + ISNULL (mid.inequality_columns, '')
+  + ')'
+  + ISNULL (' INCLUDE (' + mid.included_columns + ')', '') AS create_index_statement,
+  migs.*, mid.database_id, mid.[object_id]
+FROM sys.dm_db_missing_index_groups mig
+INNER JOIN sys.dm_db_missing_index_group_stats migs ON migs.group_handle = mig.index_group_handle
+INNER JOIN sys.dm_db_missing_index_details mid ON mig.index_handle = mid.index_handle
+WHERE migs.avg_total_user_cost * (migs.avg_user_impact / 100.0) * (migs.user_seeks + migs.user_scans) > 10
+ORDER BY migs.avg_total_user_cost * migs.avg_user_impact * (migs.user_seeks + migs.user_scans) DESC
+
+Get Average Waits for Database
+
+WITH [Waits] AS
+    (SELECT
+        [wait_type],
+        [wait_time_ms] / 1000.0 AS [WaitS],
+        ([wait_time_ms] - [signal_wait_time_ms]) / 1000.0 AS [ResourceS],
+        [signal_wait_time_ms] / 1000.0 AS [SignalS],
+        [waiting_tasks_count] AS [WaitCount],
+        100.0 * [wait_time_ms] / SUM ([wait_time_ms]) OVER() AS [Percentage],
+        ROW_NUMBER() OVER(ORDER BY [wait_time_ms] DESC) AS [RowNum]
+    FROM sys.dm_db_wait_stats
+    WHERE [wait_type] NOT IN (
+        N'BROKER_EVENTHANDLER',         N'BROKER_RECEIVE_WAITFOR',
+        N'BROKER_TASK_STOP',            N'BROKER_TO_FLUSH',
+        N'BROKER_TRANSMITTER',          N'CHECKPOINT_QUEUE',
+        N'CHKPT',                       N'CLR_AUTO_EVENT',
+        N'CLR_MANUAL_EVENT',            N'CLR_SEMAPHORE',
+        N'DBMIRROR_DBM_EVENT',          N'DBMIRROR_EVENTS_QUEUE',
+        N'DBMIRROR_WORKER_QUEUE',       N'DBMIRRORING_CMD',
+        N'DIRTY_PAGE_POLL',             N'DISPATCHER_QUEUE_SEMAPHORE',
+        N'EXECSYNC',                    N'FSAGENT',
+        N'FT_IFTS_SCHEDULER_IDLE_WAIT', N'FT_IFTSHC_MUTEX',
+        N'HADR_CLUSAPI_CALL',           N'HADR_FILESTREAM_IOMGR_IOCOMPLETION',
+        N'HADR_LOGCAPTURE_WAIT',        N'HADR_NOTIFICATION_DEQUEUE',
+        N'HADR_TIMER_TASK',             N'HADR_WORK_QUEUE',
+        N'KSOURCE_WAKEUP',              N'LAZYWRITER_SLEEP',
+        N'LOGMGR_QUEUE',                N'ONDEMAND_TASK_QUEUE',
+        N'PWAIT_ALL_COMPONENTS_INITIALIZED',
+        N'QDS_PERSIST_TASK_MAIN_LOOP_SLEEP',
+        N'QDS_CLEANUP_STALE_QUERIES_TASK_MAIN_LOOP_SLEEP',
+        N'REQUEST_FOR_DEADLOCK_SEARCH', N'RESOURCE_QUEUE',
+        N'SERVER_IDLE_CHECK',           N'SLEEP_BPOOL_FLUSH',
+        N'SLEEP_DBSTARTUP',             N'SLEEP_DCOMSTARTUP',
+        N'SLEEP_MASTERDBREADY',         N'SLEEP_MASTERMDREADY',
+        N'SLEEP_MASTERUPGRADED',        N'SLEEP_MSDBSTARTUP',
+        N'SLEEP_SYSTEMTASK',            N'SLEEP_TASK',
+        N'SLEEP_TEMPDBSTARTUP',         N'SNI_HTTP_ACCEPT',
+        N'SP_SERVER_DIAGNOSTICS_SLEEP', N'SQLTRACE_BUFFER_FLUSH',
+        N'SQLTRACE_INCREMENTAL_FLUSH_SLEEP',
+        N'SQLTRACE_WAIT_ENTRIES',       N'WAIT_FOR_RESULTS',
+        N'WAITFOR',                     N'WAITFOR_TASKSHUTDOWN',
+        N'WAIT_XTP_HOST_WAIT',          N'WAIT_XTP_OFFLINE_CKPT_NEW_LOG',
+        N'WAIT_XTP_CKPT_CLOSE',         N'XE_DISPATCHER_JOIN',
+        N'XE_DISPATCHER_WAIT',          N'XE_TIMER_EVENT')
+    )
+SELECT
+    [W1].[wait_type] AS [WaitType],
+    CAST ([W1].[WaitS] AS DECIMAL (16, 2)) AS [Wait_S],
+    CAST ([W1].[ResourceS] AS DECIMAL (16, 2)) AS [Resource_S],
+    CAST ([W1].[SignalS] AS DECIMAL (16, 2)) AS [Signal_S],
+    [W1].[WaitCount] AS [WaitCount],
+    CAST ([W1].[Percentage] AS DECIMAL (5, 2)) AS [Percentage],
+    CAST (([W1].[WaitS] / [W1].[WaitCount]) AS DECIMAL (16, 4)) AS [AvgWait_S],
+    CAST (([W1].[ResourceS] / [W1].[WaitCount]) AS DECIMAL (16, 4)) AS [AvgRes_S],
+    CAST (([W1].[SignalS] / [W1].[WaitCount]) AS DECIMAL (16, 4)) AS [AvgSig_S]
+FROM [Waits] AS [W1]
+INNER JOIN [Waits] AS [W2]
+    ON [W2].[RowNum] <= [W1].[RowNum]
+GROUP BY [W1].[RowNum], [W1].[wait_type], [W1].[WaitS],
+    [W1].[ResourceS], [W1].[SignalS], [W1].[WaitCount], [W1].[Percentage]
+HAVING SUM ([W2].[Percentage]) - [W1].[Percentage] < 95; -- percentage threshold
+GO
+
+
+The below queries will give you the top ten queries based on different parameters
+
+print '-- query and plan hash capture --'
+
+print '-- top 10 CPU by query_hash --'
+select getdate() as runtime, *  --into tbl_QueryHashByCPU
+from
+(
+SELECT TOP 10 query_hash, COUNT (distinct query_plan_hash) as 'distinct query_plan_hash count',
+	 sum(execution_count) as 'execution_count', 
+	 sum(total_worker_time) as 'total_worker_time',
+	 SUM(total_elapsed_time) as 'total_elapsed_time',
+	 SUM (total_logical_reads) as 'total_logical_reads',	 
+    max(REPLACE(REPLACE (REPLACE (SUBSTRING (CONVERT(nvarchar(4000),st.[text]), qs.statement_start_offset/2 + 1, 
+      CASE WHEN qs.statement_end_offset = -1 THEN LEN (st.[text]) 
+        ELSE qs.statement_end_offset/2 - qs.statement_start_offset/2 + 1
+      END), CHAR(13), ' '), CHAR(10), ' '), CHAR(09), ' '))  AS sample_statement_text
+FROM sys.dm_exec_query_stats AS qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) AS st
+group by query_hash
+ORDER BY sum(total_worker_time) DESC
+) t
+
+go
+
+
+print '-- top 10 logical reads by query_hash --'
+select getdate() as runtime, *  --into tbl_QueryHashByLogicalReads
+from
+(
+SELECT TOP 10 query_hash, 
+	COUNT (distinct query_plan_hash) as 'distinct query_plan_hash count',
+	sum(execution_count) as 'execution_count', 
+	 sum(total_worker_time) as 'total_worker_time',
+	 SUM(total_elapsed_time) as 'total_elapsed_time',
+	 SUM (total_logical_reads) as 'total_logical_reads',
+    max(REPLACE(REPLACE (REPLACE (SUBSTRING (CONVERT(nvarchar(4000),st.[text]), qs.statement_start_offset/2 + 1, 
+      CASE WHEN qs.statement_end_offset = -1 THEN LEN (st.[text]) 
+        ELSE qs.statement_end_offset/2 - qs.statement_start_offset/2 + 1
+      END), CHAR(13), ' '), CHAR(10), ' '), CHAR(09), ' '))  AS sample_statement_text
+FROM sys.dm_exec_query_stats AS qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) AS st
+group by query_hash
+ORDER BY sum(total_logical_reads) DESC
+) t
+go
+
+print '-- top 10 elapsed time by query_hash --'
+select getdate() as runtime, * -- into tbl_QueryHashByElapsedTime
+from
+(
+SELECT TOP 10 query_hash, 
+	sum(execution_count) as 'execution_count', 
+	COUNT (distinct query_plan_hash) as 'distinct query_plan_hash count',
+	 sum(total_worker_time) as 'total_worker_time',
+	 SUM(total_elapsed_time) as 'total_elapsed_time',
+	 SUM (total_logical_reads) as 'total_logical_reads',
+    max(REPLACE(REPLACE (REPLACE (SUBSTRING (CONVERT(nvarchar(4000),st.[text]), qs.statement_start_offset/2 + 1, 
+      CASE WHEN qs.statement_end_offset = -1 THEN LEN (st.[text]) 
+        ELSE qs.statement_end_offset/2 - qs.statement_start_offset/2 + 1
+      END), CHAR(13), ' '), CHAR(10), ' '), CHAR(09), ' '))  AS sample_statement_text
+FROM sys.dm_exec_query_stats AS qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) AS st
+group by query_hash
+ORDER BY sum(total_elapsed_time) DESC
+) t
+go
+
+
+print '-- top 10 CPU by query_plan_hash and query_hash --'
+SELECT TOP 10 query_plan_hash, query_hash, 
+COUNT (distinct query_plan_hash) as 'distinct query_plan_hash count',
+sum(execution_count) as 'execution_count', 
+	 sum(total_worker_time) as 'total_worker_time',
+	 SUM(total_elapsed_time) as 'total_elapsed_time',
+	 SUM (total_logical_reads) as 'total_logical_reads',
+    max(REPLACE (REPLACE (REPLACE (SUBSTRING (CONVERT(nvarchar(4000),st.[text]), qs.statement_start_offset/2 + 1, 
+      CASE WHEN qs.statement_end_offset = -1 THEN LEN ( st.[text])
+        ELSE qs.statement_end_offset/2 - qs.statement_start_offset/2 + 1
+      END), CHAR(13), ' '), CHAR(10), ' '), CHAR(09), ' '))  AS sample_statement_text
+FROM sys.dm_exec_query_stats AS qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) AS st
+group by query_plan_hash, query_hash
+ORDER BY sum(total_worker_time) DESC;
+
+go
+
+
+print '-- top 10 logical reads by query_plan_hash and query_hash --'
+SELECT TOP 10 query_plan_hash, query_hash, sum(execution_count) as 'execution_count', 
+	 sum(total_worker_time) as 'total_worker_time',
+	 SUM(total_elapsed_time) as 'total_elapsed_time',
+	 SUM (total_logical_reads) as 'total_logical_reads',
+    max(REPLACE( REPLACE (REPLACE (SUBSTRING (CONVERT(nvarchar(4000),st.[text]), qs.statement_start_offset/2 + 1, 
+      CASE WHEN qs.statement_end_offset = -1 THEN LEN (st.[text]) 
+        ELSE qs.statement_end_offset/2 - qs.statement_start_offset/2 + 1
+      END), CHAR(13), ' '), CHAR(10), ' '), CHAR(09), ' '))  AS sample_statement_text
+FROM sys.dm_exec_query_stats AS qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) AS st
+group by query_plan_hash, query_hash
+ORDER BY sum(total_logical_reads) DESC;
+
+go
+
+
+print '-- top 10 elapsed time  by query_plan_hash and query_hash --'
+SELECT TOP 10 query_plan_hash, query_hash, sum(execution_count) as 'execution_count', 
+	 sum(total_worker_time) as 'total_worker_time',
+	 SUM(total_elapsed_time) as 'total_elapsed_time',
+	 SUM (total_logical_reads) as 'total_logical_reads',
+    max(REPLACE( REPLACE (REPLACE (SUBSTRING ( CONVERT(nvarchar(4000),st.[text]), qs.statement_start_offset/2 + 1, 
+      CASE WHEN qs.statement_end_offset = -1 THEN LEN (st.[text]) 
+        ELSE qs.statement_end_offset/2 - qs.statement_start_offset/2 + 1
+      END), CHAR(13), ' '), CHAR(10), ' '), CHAR(09), ' '))  AS sample_statement_text
+FROM sys.dm_exec_query_stats AS qs
+CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) AS st
+group by query_plan_hash, query_hash
+ORDER BY sum(total_elapsed_time) DESC;
+
+go
+
+Query MasterDB (New Version)
+
+SELECT 
+       avg(avg_cpu_percent) AS 'Average CPU Percentage Used',
+       max(avg_cpu_percent) AS 'Maximum CPU Percentage Used',
+       avg(avg_physical_data_read_percent) AS 'Average Physical IOPS Percentage',
+       max(avg_physical_data_read_percent) AS 'Maximum Physical IOPS Percentage',
+	   avg(avg_log_write_percent) AS 'Average Log Write Percentage',
+       max(avg_log_write_percent) AS 'Maximum Log Write Percentage',
+       --avg(avg_memory_percent) AS 'Average Memory Used Percentage',
+       --max(avg_memory_percent) AS 'Maximum Memory Used Percentage',
+       avg(active_worker_count) AS 'Average # of Workers',
+       max(active_worker_count) AS 'Maximum # of Workers'
+FROM sys.resource_stats 
+WHERE database_name = 'userdb1' AND 
+start_time > DATEADD(day, -7, GETDATE())
