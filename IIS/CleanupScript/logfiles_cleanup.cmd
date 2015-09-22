@@ -21,7 +21,7 @@ for /f "tokens=1,2 delims==" %%a IN ('findstr "^days" "%~n0.ini"') do set days=%
 
 :: get all location entries from ini file and cleanup those directories recursively. 
 for /F "tokens=1,2 delims==" %%a IN ('findstr "^location" "%~n0.ini"') DO forfiles -p "%%b" -s -m *.* -d -%days% -c "cmd /C del /f /q @FILE"
-for /F "tokens=1,2 delims==" %%a IN ('findstr "^location" "%~n0.ini"') DO robocopy %logdir% %logdir% /s /move
+for /F "tokens=1,2 delims==" %%a IN ('findstr "^location" "%~n0.ini"') DO robocopy %%b %%b /s /move
 
 :EOF
 ::unset used variables
