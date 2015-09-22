@@ -20,7 +20,10 @@ echo settings file found. Parsing...
 for /f "tokens=1,2 delims==" %%a IN ('findstr "^days" "%~n0.ini"') do set days=%%b
 
 :: get all location entries from ini file and cleanup those directories recursively. 
-for /F "tokens=1,2 delims==" %%a IN ('findstr "^location" "%~n0.ini"') DO forfiles -p "%%b" -s -m *.* -d -%days% -c "cmd /C del /f /q @FILE"
+for /F "tokens=1,2 delims==" %%a IN ('findstr "^location" "%~n0.ini"') do set logdir=%%b
+forfiles -p "%logdir%" -s -m *.* -d -%days% -c "cmd /C del /f /q @FILE"
+robocopy %logdir% %logdir% /s /move
+
 
 :EOF
 ::unset used variables

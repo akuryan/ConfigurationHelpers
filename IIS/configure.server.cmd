@@ -62,18 +62,18 @@ REM http://www.iis.net/learn/publish/using-web-deploy/web-deploy-powershell-cmdl
 REM Register .NET 2.0
 C:\Windows\Microsoft.NET\Framework64\v2.0.50727\aspnet_regiis.exe -iru
 
+REM Install choco
+@powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
+REM Install notepad++
+choco install notepadplusplus -y
+REM choco webpi UrlRewrite2 - for some reason it can fail
+REM Add firewall configuration rules
+
 REM WmSvc should have write access on C:\Windows\System32\inetsrv\config\applicationhost.config.
 icacls %windir%\System32\inetsrv\config\applicationhost.config /grant "NT SERVICE\WMSvc":W
 REM WDeployConfigWriter and WDeployAdmin windows users should have 'Password never expires' checkboxes checked, as stated here http://blogs.technet.com/b/bernhard_frank/archive/2011/11/03/webmatrix-check-compatibility-shows-exclamation-mark-and-states-asp-net-version-not-available.aspx
 wmic path Win32_UserAccount where Name='WDeployAdmin' set PasswordExpires=false
 wmic path Win32_UserAccount where Name='WDeployConfigWriter' set PasswordExpires=false
-
-REM Install choco
-@powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
-REM Install notepad++
-choco install notepadplusplus
-REM choco webpi UrlRewrite2 - for some reason it can fail
-REM Add firewall configuration rules
 
 REM Adding compression to logs folder
 compact /c C:\inetpub\logs\
