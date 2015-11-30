@@ -62,8 +62,8 @@ C:\Windows\Microsoft.NET\Framework64\v2.0.50727\aspnet_regiis.exe -iru
 REM Install choco
 @powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
 REM Install notepad++
-choco install notepadplusplus webpi webpicmd -y
-echo Install  Web Deploy 3.6 for Hosting servers from web platform installer yourself
+choco install notepadplusplus webpi webpicmd curl -y
+echo Install  Web Deploy 3.6 for Hosting servers and UrlRewrite2 from web platform installer yourself
 pause
 
 REM choco list --source webpi -- can be used to locate required packages in future, as soon as webpi source will be implemented (described at https://github.com/chocolatey/choco/wiki/CommandsList)
