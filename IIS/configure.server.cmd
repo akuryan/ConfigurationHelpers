@@ -50,9 +50,6 @@ REM Add content expiration headers for 14 days
 REM Disabel content expiration
 REM %windir%\System32\Inetsrv\Appcmd.exe set config /section:staticContent /clientCache.cacheControlMode:DisableCache
 
-REM Install IIS modules (Url Rewrite 2 and Webdeploy)
-@powershell -NoProfile -ExecutionPolicy unrestricted %~dp0\IISModules.ps1
-
 REM TODO: Add scheduling for CleanupScript
 REM TODO: Add deployer user creation
 REM TODO: Configure deployment for unplrivileged user 
@@ -65,8 +62,12 @@ C:\Windows\Microsoft.NET\Framework64\v2.0.50727\aspnet_regiis.exe -iru
 REM Install choco
 @powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
 REM Install notepad++
-choco install notepadplusplus -y
-REM choco webpi UrlRewrite2 - for some reason it can fail
+choco install notepadplusplus webpi webpicmd -y
+echo Install  Web Deploy 3.6 for Hosting servers from web platform installer yourself
+pause
+
+REM choco list --source webpi -- can be used to locate required packages in future, as soon as webpi source will be implemented (described at https://github.com/chocolatey/choco/wiki/CommandsList)
+REM choco webpi UrlRewrite2 - sources is not yet implemented, so UrlRewrite2 and Web Deploy 3.6 for Hosting servers have to be installed manually
 REM Add firewall configuration rules
 
 REM WmSvc should have write access on C:\Windows\System32\inetsrv\config\applicationhost.config.
