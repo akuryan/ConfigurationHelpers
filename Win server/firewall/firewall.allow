@@ -1,0 +1,7 @@
+# This is the firewall configuration file. It is scanned every 5 minutes for updates.
+ 
+# This file may contain comment lines using hash signs (like this one). Other lines
+# must consist of the following: IP address or range in CIDR notation
+ 
+# Localhost
+127.0.0.1/8
