@@ -21,7 +21,15 @@
         "startingPriorityIndex": {
             "type": "string",
             "defaultValue": "100"
-        }
+        },
+		"portToAllow" : {
+            "type": "string",
+            "defaultValue": "80"
+        },
+		"protocolToAllow" : {
+            "type": "string",
+            "defaultValue": "tcp"
+        },		
     },
     "variables": {
 		"apiVersionString": "2015-05-01-preview",	
@@ -42,9 +50,9 @@
 			"properties": {
 				
 				"description": "[concat('Allow everything from ', parameters('allowedCIDRsNames')[copyIndex()])]",
-				"protocol": "*",
+				"protocol": "parameters('protocolToAllow')",
 				"sourcePortRange": "*",
-				"destinationPortRange": "*",
+				"destinationPortRange": "parameters('portToAllow')",
 				"sourceAddressPrefix": "[parameters('allowedCIDRs')[copyIndex()]]",
 				"destinationAddressPrefix": "*",
 				"access": "Allow",
