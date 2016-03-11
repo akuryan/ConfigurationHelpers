@@ -21,7 +21,7 @@
         "startingPriorityIndexMinusOne": {
             "type": "int",
             "defaultValue": 100
-        }			
+        },	
         "startingPriorityIndex": {
             "type": "int",
             "defaultValue": 101
