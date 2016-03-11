@@ -42,7 +42,7 @@
 	{
 		"apiVersion": "[variables('apiVersionString')]",
 		"type": "Microsoft.Network/networkSecurityGroups/securityRules",
-		"name": "[concat(parameters('networkSecurityGroupName'), '/', [parameters('startingPriorityIndexMinusOne')])]",
+		"name": "[concat(parameters('networkSecurityGroupName'), '/', parameters('startingPriorityIndexMinusOne'))]",
 		"location": "[resourceGroup().location]",
 		  "dependsOn": [
 			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
@@ -56,7 +56,7 @@
 				"sourceAddressPrefix": "[parameters('allowedCIDRs')[0]]",
 				"destinationAddressPrefix": "*",
 				"access": "Allow",
-				"priority": "[copyIndex([parameters('startingPriorityIndexMinusOne')])",
+				"priority": "[copyIndex(parameters('startingPriorityIndexMinusOne'))",
 				"direction": "Inbound"
 			}		
 	},
@@ -67,11 +67,11 @@
 				},	
 		"apiVersion": "[variables('apiVersionString')]",
 		"type": "Microsoft.Network/networkSecurityGroups/securityRules",
-		"name": "[concat(parameters('networkSecurityGroupName'), '/', [copyIndex([parameters('startingPriorityIndex')])])]",
+		"name": "[concat(parameters('networkSecurityGroupName'), '/', copyIndex(parameters('startingPriorityIndex')))]",
 		"location": "[resourceGroup().location]",
 		  "dependsOn": [
 			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
-			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'), '/securityRules/', [copyIndex([parameters('startingPriorityIndexMinusOne')])])]",
+			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'), '/securityRules/', [opyIndex(parameters('startingPriorityIndexMinusOne')))]",
 		  ],
 			"properties": {
 				
@@ -82,7 +82,7 @@
 				"sourceAddressPrefix": "[parameters('allowedCIDRs')[copyIndex(1)]]",
 				"destinationAddressPrefix": "*",
 				"access": "Allow",
-				"priority": "[copyIndex([parameters('startingPriorityIndex')])",
+				"priority": "[copyIndex(parameters('startingPriorityIndex'))",
 				"direction": "Inbound"
 			}
 	}
