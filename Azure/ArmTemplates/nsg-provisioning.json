@@ -15,12 +15,16 @@
 		"allowedCIDRsNames": {
 			"type": "array",
 					"defaultValue":[ 
-					"empty_name", 
+					"empty_name",
 					]
 			},
+        "startingPriorityIndexMinusOne": {
+            "type": "int",
+            "defaultValue": 100
+        }			
         "startingPriorityIndex": {
-            "type": "string",
-            "defaultValue": "100"
+            "type": "int",
+            "defaultValue": 101
         },
 		"portToAllow" : {
             "type": "string",
@@ -36,24 +40,46 @@
     },	
   "resources": [
 	{
-		"copy": { 
-				"name": "allowAllCopy", 
-				"count": "[length(parameters('allowedCIDRs'))]" 
-				},	
 		"apiVersion": "[variables('apiVersionString')]",
 		"type": "Microsoft.Network/networkSecurityGroups/securityRules",
-		"name": "[concat(parameters('networkSecurityGroupName'), '/', parameters('allowedCIDRsNames')[copyIndex()])]",
+		"name": "[concat(parameters('networkSecurityGroupName'), '/', [parameters('startingPriorityIndexMinusOne')])]",
 		"location": "[resourceGroup().location]",
 		  "dependsOn": [
 			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
 		  ],
 			"properties": {
 				
-				"description": "[concat('Allow everything from ', parameters('allowedCIDRsNames')[copyIndex()])]",
+				"description": "[concat('Allow from ', parameters('allowedCIDRsNames')[0])]",
 				"protocol": "parameters('protocolToAllow')",
 				"sourcePortRange": "*",
 				"destinationPortRange": "parameters('portToAllow')",
-				"sourceAddressPrefix": "[parameters('allowedCIDRs')[copyIndex()]]",
+				"sourceAddressPrefix": "[parameters('allowedCIDRs')[0]]",
+				"destinationAddressPrefix": "*",
+				"access": "Allow",
+				"priority": "[copyIndex([parameters('startingPriorityIndexMinusOne')])",
+				"direction": "Inbound"
+			}		
+	},
+	{
+		"copy": { 
+				"name": "allowCopy", 
+				"count": "[length(parameters('allowedCIDRs'))]" 
+				},	
+		"apiVersion": "[variables('apiVersionString')]",
+		"type": "Microsoft.Network/networkSecurityGroups/securityRules",
+		"name": "[concat(parameters('networkSecurityGroupName'), '/', [copyIndex([parameters('startingPriorityIndex')])])]",
+		"location": "[resourceGroup().location]",
+		  "dependsOn": [
+			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
+			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'), '/securityRules/', [copyIndex([parameters('startingPriorityIndexMinusOne')])])]",
+		  ],
+			"properties": {
+				
+				"description": "[concat('Allow from ', parameters('allowedCIDRsNames')[copyIndex(1)])]",
+				"protocol": "parameters('protocolToAllow')",
+				"sourcePortRange": "*",
+				"destinationPortRange": "parameters('portToAllow')",
+				"sourceAddressPrefix": "[parameters('allowedCIDRs')[copyIndex(1)]]",
 				"destinationAddressPrefix": "*",
 				"access": "Allow",
 				"priority": "[copyIndex([parameters('startingPriorityIndex')])",
