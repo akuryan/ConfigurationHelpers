@@ -79,7 +79,7 @@ wmic path Win32_UserAccount where Name='WDeployAdmin' set PasswordExpires=false
 wmic path Win32_UserAccount where Name='WDeployConfigWriter' set PasswordExpires=false
 
 REM Adding compression to logs folder
-compact /c C:\inetpub\logs\
+compact /c /s /a /i /f /q C:\inetpub\logs\
 
 REM Set updates to be only downloaded
 net stop wuauserv

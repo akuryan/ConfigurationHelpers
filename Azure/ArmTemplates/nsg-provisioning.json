@@ -1,0 +1,56 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "networkSecurityGroupName": {
+            "type": "string",
+            "defaultValue": "myNSG"
+        },
+		"allowedCIDRs": {
+			"type": "array",
+					"defaultValue":[ 
+					"1.1.1.1/32", 
+					]
+			},
+		"allowedCIDRsNames": {
+			"type": "array",
+					"defaultValue":[ 
+					"empty_name", 
+					]
+			},
+        "startingPriorityIndex": {
+            "type": "string",
+            "defaultValue": "100"
+        }
+    },
+    "variables": {
+		"apiVersionString": "2015-05-01-preview",	
+    },	
+  "resources": [
+	{
+		"copy": { 
+				"name": "allowAllCopy", 
+				"count": "[length(parameters('allowedCIDRs'))]" 
+				},	
+		"apiVersion": "[variables('apiVersionString')]",
+		"type": "Microsoft.Network/networkSecurityGroups/securityRules",
+		"name": "[concat(parameters('networkSecurityGroupName'), '/', parameters('allowedCIDRsNames')[copyIndex()])]",
+		"location": "[resourceGroup().location]",
+		  "dependsOn": [
+			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
+		  ],
+			"properties": {
+				
+				"description": "[concat('Allow everything from ', parameters('allowedCIDRsNames')[copyIndex()])]",
+				"protocol": "*",
+				"sourcePortRange": "*",
+				"destinationPortRange": "*",
+				"sourceAddressPrefix": "[parameters('allowedCIDRs')[copyIndex()]]",
+				"destinationAddressPrefix": "*",
+				"access": "Allow",
+				"priority": "[copyIndex([parameters('startingPriorityIndex')])",
+				"direction": "Inbound"
+			}
+	}
+	]
+	}
