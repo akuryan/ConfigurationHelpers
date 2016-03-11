@@ -71,7 +71,7 @@
 		"location": "[resourceGroup().location]",
 		  "dependsOn": [
 			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
-			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'), '/securityRules/', [opyIndex(parameters('startingPriorityIndexMinusOne')))]",
+			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'), '/securityRules/', copyIndex(parameters('startingPriorityIndexMinusOne')))]",
 		  ],
 			"properties": {
 				
