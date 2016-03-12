@@ -5,6 +5,7 @@ Based on suggestion in this issue: https://github.com/Azure/azure-powershell/iss
 
 To use this template - you can add to yours following snippet, which will allow you to provision acceess to ports 22, 80 and 443 for IPs defined in allowedAllCIDRs with desription from allowedAllCIDRsNames, and provision access to ports 80 and 443 to IPs in allowedLimitedCIDRs with desription from allowedLimitedCIDRsNames
 
+```json
 {
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
@@ -200,3 +201,5 @@ To use this template - you can add to yours following snippet, which will allow 
 	},	
  ]
 }
+```
+
