@@ -1,6 +1,6 @@
 {
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.1",
+    "contentVersion": "1.0.0.0",
     "parameters": {
         "networkSecurityGroupName": {
             "type": "string",
@@ -67,7 +67,7 @@
 		"name": "[concat(parameters('networkSecurityGroupName'), '/', copyIndex(int(parameters('startingPriorityIndex'))))]",
 		"location": "[resourceGroup().location]",
 		  "dependsOn": [
-			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'), '/securityRules/', copyIndex(parameters('startingPriorityIndexMinusOne')))]",
+			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'), '/securityRules/', copyIndex(int(parameters('startingPriorityIndexMinusOne'))))]",
 		  ],
 			"properties": {
 				
