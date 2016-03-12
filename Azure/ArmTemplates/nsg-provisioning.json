@@ -44,9 +44,6 @@
 		"type": "Microsoft.Network/networkSecurityGroups/securityRules",
 		"name": "[concat(parameters('networkSecurityGroupName'), '/', parameters('startingPriorityIndexMinusOne'))]",
 		"location": "[resourceGroup().location]",
-		  "dependsOn": [
-			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
-		  ],
 			"properties": {
 				
 				"description": "[concat('Allow from ', parameters('allowedCIDRsNames')[0])]",
@@ -70,7 +67,6 @@
 		"name": "[concat(parameters('networkSecurityGroupName'), '/', copyIndex(parameters('startingPriorityIndex')))]",
 		"location": "[resourceGroup().location]",
 		  "dependsOn": [
-			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
 			"[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'), '/securityRules/', copyIndex(parameters('startingPriorityIndexMinusOne')))]",
 		  ],
 			"properties": {
