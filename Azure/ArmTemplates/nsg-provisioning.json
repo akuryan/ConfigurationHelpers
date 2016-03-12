@@ -71,11 +71,11 @@
 		  ],
 			"properties": {
 				
-				"description": "[concat('Allow from ', parameters('allowedCIDRsNames')[copyIndex(1)])]",
+				"description": "[concat('Allow from ', parameters('allowedCIDRsNames')[copyIndex()])]",
 				"protocol": "[parameters('protocolToAllow')]",
 				"sourcePortRange": "*",
 				"destinationPortRange": "[parameters('portToAllow')]",
-				"sourceAddressPrefix": "[parameters('allowedCIDRs')[copyIndex(1)]]",
+				"sourceAddressPrefix": "[parameters('allowedCIDRs')[copyIndex()]]",
 				"destinationAddressPrefix": "*",
 				"access": "Allow",
 				"priority": "[copyIndex(int(parameters('startingPriorityIndex')))]",
