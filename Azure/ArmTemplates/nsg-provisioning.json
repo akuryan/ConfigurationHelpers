@@ -49,7 +49,7 @@
 				"description": "[concat('Allow from ', parameters('allowedCIDRsNames')[0])]",
 				"protocol": "[parameters('protocolToAllow')]",
 				"sourcePortRange": "*",
-				"destinationPortRange": "[parameters('portToAllow']",
+				"destinationPortRange": "[parameters('portToAllow')]",
 				"sourceAddressPrefix": "[parameters('allowedCIDRs')[0]]",
 				"destinationAddressPrefix": "*",
 				"access": "Allow",
