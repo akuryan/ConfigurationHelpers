@@ -53,7 +53,7 @@
 				"sourceAddressPrefix": "[parameters('allowedCIDRs')[0]]",
 				"destinationAddressPrefix": "*",
 				"access": "Allow",
-				"priority": "[copyIndex(int(parameters('startingPriorityIndexMinusOne')))]",
+				"priority": "[parameters('startingPriorityIndexMinusOne')]",
 				"direction": "Inbound"
 			}		
 	},
