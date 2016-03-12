@@ -19,12 +19,12 @@
 					]
 			},
         "startingPriorityIndexMinusOne": {
-            "type": "int",
-            "defaultValue": 100
+            "type": "string",
+            "defaultValue": "100"
         },	
         "startingPriorityIndex": {
-            "type": "int",
-            "defaultValue": 101
+            "type": "string",
+            "defaultValue": "101"
         },
 		"portToAllow" : {
             "type": "string",
