@@ -62,7 +62,7 @@ C:\Windows\Microsoft.NET\Framework64\v2.0.50727\aspnet_regiis.exe -iru
 REM Install choco
 @powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
 REM Install notepad++
-choco install notepadplusplus webpi curl -y
+choco install notepadplusplus webpi webpicmd curl -y
 webpicmd /Install /Products:UrlRewrite2,WDeploy36PS /AcceptEULA
 REM You can search webpicmd in powershell for required ' webpicmd /List /ListOption:All | select-string -pattern "rewrite" '
 echo Install  Web Deploy 3.6 for Hosting servers and UrlRewrite2 from web platform installer yourself
@@ -86,4 +86,5 @@ net stop wuauserv
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f
 net start wuauserv
 
-choco install newrelicserver newrelic-dotnet -y
+::Fails to install NewRelic
+REM choco install newrelicserver newrelic-dotnet -y
