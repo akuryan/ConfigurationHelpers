@@ -14,19 +14,13 @@
       </add>
     </applicationPools>
   </system.applicationHost>
-  <system.webServer>
-    <security>
-      <ipSecurity allowUnlisted="false" denyAction="NotFound" xdt:Transform="SetAttributes(allowUnlisted, denyAction)">
-        <add ipAddress="83.163.112.106" allowed="true" xdt:Transform="Insert"/>
-        <add ipAddress="217.100.63.138" allowed="true" xdt:Transform="Insert"/>
-        <add ipAddress="213.34.51.155" allowed="true" xdt:Transform="Insert"/>
-        <add ipAddress="213.34.51.154" allowed="true" xdt:Transform="Insert"/>
-        <add ipAddress="213.127.142.210" allowed="true" xdt:Transform="Insert"/>
-        <add ipAddress="94.210.0.232" allowed="true" xdt:Transform="Insert"/>
-        <add ipAddress="80.112.222.222" allowed="true" xdt:Transform="Insert"/>
-        <add ipAddress="37.17.50.76" allowed="true" xdt:Transform="Insert"/>
-        <add ipAddress="23.97.172.136" allowed="true" xdt:Transform="Insert"/>
-      </ipSecurity>
-    </security>
-  </system.webServer>
+  <location path="%XDT_SITENAME%" xdt:Locator="Match(path)">
+	<system.webServer xdt:Transform="InsertIfMissing">
+		<security xdt:Transform="InsertIfMissing">
+			<ipSecurity allowUnlisted="false" denyAction="NotFound" xdt:Transform="InsertIfMissing">
+				<add ipAddress="1.2.3.4" allowed="true" />
+			</ipSecurity>
+		</security>
+	</system.webServer>  
+  </location>
 </configuration>
