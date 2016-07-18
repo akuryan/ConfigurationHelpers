@@ -11,3 +11,4 @@ apt-get install -y mysql-client mysql-server
 
 # Allow remote connection
 sed -i "s/bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
+service mysql restart
