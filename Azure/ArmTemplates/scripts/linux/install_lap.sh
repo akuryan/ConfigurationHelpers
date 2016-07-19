@@ -12,6 +12,7 @@ echo \<\?php phpinfo\(\)\; \?\> >> /var/www/html/phpinfo.php
 #Do some defaul Apache setup
 #Enable rewrite
 a2enmod rewrite
+a2enmod headers
 #Set index.php as default doc
 if [ -f /etc/apache2/mods-enabled/dir.conf ]
 then
@@ -20,7 +21,7 @@ then
 	echo \</IfModule\> >> /etc/apache2/mods-enabled/dir.conf
 fi
 
-#Anable .htaccess and other not really secure stuff
+#Enable .htaccess and other not really secure stuff
 if [ -f /etc/apache2/sites-enabled/000-default.conf ]
 then
 	echo \<VirtualHost *:80\> > /etc/apache2/sites-enabled/000-default.conf
@@ -36,6 +37,7 @@ then
         echo RewriteOptions inherit >> /etc/apache2/sites-enabled/000-default.conf
         echo ErrorLog ${APACHE_LOG_DIR}/error.log >> /etc/apache2/sites-enabled/000-default.conf
         echo CustomLog ${APACHE_LOG_DIR}/access.log combined >> /etc/apache2/sites-enabled/000-default.conf
+        echo RequestHeader unset Proxy >> /etc/apache2/sites-enabled/000-default.conf
 	echo \</VirtualHost\> >> /etc/apache2/sites-enabled/000-default.conf
 fi
 
