@@ -48,14 +48,10 @@ REM Allowing compression for HTTP 1.0 and Proxies (as, for example, CloudFront u
 %windir%\System32\Inetsrv\Appcmd.exe set config -section:httpCompression -noCompressionForProxies:False /commit:apphost
 REM Add content expiration headers for 14 days
 %windir%\System32\Inetsrv\Appcmd.exe set config /section:staticContent /clientCache.cacheControlMode:UseMaxAge /clientCache.cacheControlMaxAge:14.00:00:00
-REM Disabel content expiration
+REM Disable content expiration
 REM %windir%\System32\Inetsrv\Appcmd.exe set config /section:staticContent /clientCache.cacheControlMode:DisableCache
 
 REM TODO: Add scheduling for CleanupScript
-REM TODO: Add deployer user creation
-REM TODO: Configure deployment for unplrivileged user 
-REM http://www.iis.net/learn/publish/using-web-deploy/powershell-scripts-for-automating-web-deploy-setup
-REM http://www.iis.net/learn/publish/using-web-deploy/web-deploy-powershell-cmdlets
 
 REM Register .NET 2.0
 C:\Windows\Microsoft.NET\Framework64\v2.0.50727\aspnet_regiis.exe -iru
@@ -66,8 +62,6 @@ REM Install notepad++
 choco install notepadplusplus webpi webpicmd curl -y
 webpicmd /Install /Products:UrlRewrite2,WDeploy36PS /AcceptEULA
 REM You can search webpicmd in powershell for required ' webpicmd /List /ListOption:All | select-string -pattern "rewrite" '
-echo Install  Web Deploy 3.6 for Hosting servers and UrlRewrite2 from web platform installer yourself
-pause
 
 REM choco list --source webpi -- can be used to locate required packages in future, as soon as webpi source will be implemented (described at https://github.com/chocolatey/choco/wiki/CommandsList)
 REM choco webpi UrlRewrite2 - sources is not yet implemented, so UrlRewrite2 and Web Deploy 3.6 for Hosting servers have to be installed manually
@@ -87,5 +81,20 @@ net stop wuauserv
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f
 net start wuauserv
 
-::Fails to install NewRelic
-REM choco install newrelicserver newrelic-dotnet -y
+::Generate password for deployment_user
+echo off
+for /f "usebackq" %%x in (`powershell %~dp0\GeneratePw.ps1`) do set generatedPw=%%x
+::Create deployment user
+NET USER deployment_user "%generatedPw%" /fullname:"MsDeploy deployment user" /ADD
+wmic path Win32_UserAccount where Name='deployment_user' set PasswordExpires=false
+wmic useraccount where "name='deployment_user'" set passwordchangeable=false
+echo on
+::Show password
+echo off
+echo Deployment user password:
+echo "%generatedPw%"
+echo on
+REM TODO: Configure deployment for unplrivileged user 
+REM http://www.iis.net/learn/publish/using-web-deploy/powershell-scripts-for-automating-web-deploy-setup
+REM http://www.iis.net/learn/publish/using-web-deploy/web-deploy-powershell-cmdlets
+REM Of by script c:\Program Files\IIS\Microsoft Web Deploy V3\Scripts\SetupSiteForPublish.ps1
