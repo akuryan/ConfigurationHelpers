@@ -57,9 +57,9 @@ REM Register .NET 2.0
 C:\Windows\Microsoft.NET\Framework64\v2.0.50727\aspnet_regiis.exe -iru
 
 REM Install choco
-@powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
+@powershell -NoProfile -ExecutionPolicy unrestricted -Command "iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex"
 REM Install notepad++
-choco install notepadplusplus webpi webpicmd curl -y
+choco install notepadplusplus webpi webpicmd curl -y --allow-empty-checksums
 webpicmd /Install /Products:UrlRewrite2,WDeploy36PS /AcceptEULA
 REM You can search webpicmd in powershell for required ' webpicmd /List /ListOption:All | select-string -pattern "rewrite" '
 
@@ -81,18 +81,22 @@ net stop wuauserv
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f
 net start wuauserv
 
-::Generate password for deployment_user
+::Generate password for deployment_user if not defined
 echo off
-for /f "usebackq" %%x in (`powershell %~dp0\GeneratePw.ps1`) do set generatedPw=%%x
+VERIFY OTHER 2>nul
+SETLOCAL ENABLEEXTENSIONS
+IF ERRORLEVEL 1 ECHO Unable to enable extensions
+::If there is some string set as first parameter - it will be set as password
+IF [%1]==[] (for /f "usebackq" %%x in (`powershell %~dp0\GeneratePw.ps1`) do set userPwd=%%x) ELSE (set userPwd=%1)
 ::Create deployment user
-NET USER deployment_user "%generatedPw%" /fullname:"MsDeploy deployment user" /ADD
+NET USER deployment_user "%userPwd%" /fullname:"MsDeploy deployment user" /ADD
 wmic path Win32_UserAccount where Name='deployment_user' set PasswordExpires=false
 wmic useraccount where "name='deployment_user'" set passwordchangeable=false
 echo on
 ::Show password
 echo off
 echo Deployment user password:
-echo "%generatedPw%"
+echo "%userPwd%"
 echo on
 REM TODO: Configure deployment for unplrivileged user 
 REM http://www.iis.net/learn/publish/using-web-deploy/powershell-scripts-for-automating-web-deploy-setup
