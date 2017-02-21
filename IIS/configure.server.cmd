@@ -53,11 +53,12 @@ REM %windir%\System32\Inetsrv\Appcmd.exe set config /section:staticContent /clie
 
 REM TODO: Add scheduling for CleanupScript
 
-REM Register .NET 2.0
+REM Register .NET 2.0 and .NET 4.0
 C:\Windows\Microsoft.NET\Framework64\v2.0.50727\aspnet_regiis.exe -iru
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_regiis.exe -iru
 
 REM Install choco
-@powershell -NoProfile -ExecutionPolicy unrestricted -Command "iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex"
+@powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
 REM Install notepad++
 choco install notepadplusplus webpi webpicmd curl -y --allow-empty-checksums
 webpicmd /Install /Products:UrlRewrite2,WDeploy36PS /AcceptEULA
@@ -89,7 +90,7 @@ IF ERRORLEVEL 1 ECHO Unable to enable extensions
 ::If there is some string set as first parameter - it will be set as password
 IF [%1]==[] (for /f "usebackq" %%x in (`powershell -NoProfile -ExecutionPolicy unrestricted %~dp0\GeneratePw.ps1`) do set userPwd=%%x) ELSE (set userPwd=%1)
 ::Create deployment user
-NET USER deployment_user "%userPwd%" /fullname:"MsDeploy deployment user" /ADD
+NET USER deployment_user "%userPwd%" /fullname:"MsDeploy deployment user" /ADD /Y
 wmic path Win32_UserAccount where Name='deployment_user' set PasswordExpires=false
 wmic useraccount where "name='deployment_user'" set passwordchangeable=false
 echo on
