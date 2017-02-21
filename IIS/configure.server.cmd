@@ -87,7 +87,7 @@ VERIFY OTHER 2>nul
 SETLOCAL ENABLEEXTENSIONS
 IF ERRORLEVEL 1 ECHO Unable to enable extensions
 ::If there is some string set as first parameter - it will be set as password
-IF [%1]==[] (for /f "usebackq" %%x in (`powershell %~dp0\GeneratePw.ps1`) do set userPwd=%%x) ELSE (set userPwd=%1)
+IF [%1]==[] (for /f "usebackq" %%x in (`powershell -NoProfile -ExecutionPolicy unrestricted %~dp0\GeneratePw.ps1`) do set userPwd=%%x) ELSE (set userPwd=%1)
 ::Create deployment user
 NET USER deployment_user "%userPwd%" /fullname:"MsDeploy deployment user" /ADD
 wmic path Win32_UserAccount where Name='deployment_user' set PasswordExpires=false

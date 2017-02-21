@@ -1,3 +1,4 @@
+Import-Module ServerManager -Force;
 #.NET 3.5
 Add-WindowsFeature NET-Framework-Core 
 #Credits of next going code is http://www.tugberkugurlu.com/archive/script-out-everything-initialize-your-windows-azure-vm-for-your-web-server-with-iis-web-deploy-and-other-stuff
@@ -8,7 +9,7 @@ foreach($feature in $additionalFeatures) {
     
     if(!(Get-WindowsFeature | where { $_.Name -eq $feature }).Installed) { 
 
-        Install-WindowsFeature -Name $feature -LogPath "$env:TEMP\init-webservervm_feature_$($feature)_install_log_$((get-date).ToString("yyyyMMddHHmmss")).txt"   
+        Add-WindowsFeature -Name $feature -LogPath "$env:TEMP\init-webservervm_feature_$($feature)_install_log_$((get-date).ToString("yyyyMMddHHmmss")).txt"   
     }
 }
 #Set WMSvc to Automatic Startup
