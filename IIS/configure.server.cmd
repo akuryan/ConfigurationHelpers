@@ -82,6 +82,8 @@ net stop wuauserv
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f
 net start wuauserv
 
+::Disable SSLv3
+regedit /s %~dp0\SSLFixes.reg
 ::Generate password for deployment_user if not defined
 echo off
 VERIFY OTHER 2>nul
