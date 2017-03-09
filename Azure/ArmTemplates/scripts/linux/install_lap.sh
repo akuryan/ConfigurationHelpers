@@ -35,8 +35,8 @@ then
         echo \</Directory\> >> /etc/apache2/sites-enabled/000-default.conf
         echo RewriteEngine On >> /etc/apache2/sites-enabled/000-default.conf
         echo RewriteOptions inherit >> /etc/apache2/sites-enabled/000-default.conf
-        echo ErrorLog ${APACHE_LOG_DIR}/error.log >> /etc/apache2/sites-enabled/000-default.conf
-        echo CustomLog ${APACHE_LOG_DIR}/access.log combined >> /etc/apache2/sites-enabled/000-default.conf
+        echo ErrorLog \${APACHE_LOG_DIR}/error.log >> /etc/apache2/sites-enabled/000-default.conf
+        echo CustomLog \${APACHE_LOG_DIR}/access.log combined >> /etc/apache2/sites-enabled/000-default.conf
         echo RequestHeader unset Proxy >> /etc/apache2/sites-enabled/000-default.conf
 	echo \</VirtualHost\> >> /etc/apache2/sites-enabled/000-default.conf
 fi
