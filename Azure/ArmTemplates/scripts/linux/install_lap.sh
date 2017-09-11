@@ -1,9 +1,13 @@
 #!/bin/bash
 
+# if passed - we can install required version
+
+phpversion=${1:-5}
+
 # Install required packages
 echo "installing required packages"
 apt-get -y update
-apt-get -y install apache2 php5 php5-gd php5-mysql mysql-client git unzip
+apt-get -y install apache2 php$phpversion php$phpversion-gd php$phpversion-mysql mysql-client git unzip libapache2-mod-php$phpversion
 
 # write some PHP
 echo \<center\>\<h1\>My Demo App\</h1\>\<br/\>\</center\> > /var/www/html/phpinfo.php
