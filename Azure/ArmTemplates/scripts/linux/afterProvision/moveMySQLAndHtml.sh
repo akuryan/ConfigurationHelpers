@@ -22,10 +22,13 @@ do
 	fi
 done
 
-service mysql start
 if [ -f /etc/apparmor.d/usr.sbin.mysqld ]; then
+	echo "check /etc/apparmor.d/usr.sbin.mysqld manually"
+	sudo nano /etc/apparmor.d/usr.sbin.mysqld
 	service apparmor restart
 fi
+service mysql start
+
 
 if [ -d "/var/www/html" ]; then
 	rsync -aux /var/www/html /$datadisk
