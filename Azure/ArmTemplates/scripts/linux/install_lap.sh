@@ -45,5 +45,11 @@ then
 	echo \</VirtualHost\> >> /etc/apache2/sites-enabled/000-default.conf
 fi
 
+if [ -f /etc/apache2/apache2.conf ]
+then
+	echo ServerTokens Prod
+	echo ServerSignature Off
+fi
+
 # restart Apache
 apachectl restart

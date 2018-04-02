@@ -12,8 +12,19 @@ do
 	if [ -d "/var/lib/$folder" ]; then
 	  rsync -aux /var/lib/$folder /$datadisk
 		if [ -f /etc/apparmor.d/usr.sbin.mysqld ]; then
+			#maybe using "$ i" will fix this
+			#or, maybe it is easier to replace old by new paths with smth like this: sed -i "s/bind-address.*/bind-address = 0.0.0.0/"
+			#better is sed 's|/some/UNIX/path|/a/new/path|g' files
 			sed -i "$i/$datadisk/$folder/ r," /etc/apparmor.d/usr.sbin.mysqld
 			sed -i "$i/$datadisk/$folder/** rwk," /etc/apparmor.d/usr.sbin.mysqld
+			
+#datadisk="opt"
+#folder="mysql"
+#N=`grep -n "}" usr.sbin.mysqld | grep -Eo '^[^:]+'`
+#echo $N
+#sed -e $N"s/^/  \/$datadisk\/$folder\/ r\,\n/" -i usr.sbin.mysqld
+#sed -e $N"s/^/  \/$datadisk\/$folder\/** rwk\,\n/" -i usr.sbin.mysqld
+#cat usr.sbin.mysqld			
 		fi
 		old="_old"
 		iOld="$folder$old"
