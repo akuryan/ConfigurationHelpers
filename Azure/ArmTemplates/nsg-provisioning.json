@@ -37,7 +37,7 @@
 		"destinationAddressToAllow": {"type": "string", "defaultValue": "*"}
     },
     "variables": {
-		"apiVersionString": "2015-05-01-preview",	
+		"apiVersionString": "2018-01-01",	
     },	
   "resources": [
 	{
