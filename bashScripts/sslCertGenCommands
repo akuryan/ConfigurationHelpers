@@ -1,0 +1,8 @@
+#generate key
+openssl ecparam -name prime256v1 -genkey -noout -out keyfile.key
+#generate csr
+openssl req -new -sha256 -key keyfile.key -out csrfile.csr
+#print certificate in correct order from p7b
+openssl pkcs7 -print_certs -in p7bfile.p7b -out certificate.cer
+#generate pfx
+openssl pkcs12 -export -in certificate.cer -inkey keyfile.key -out pfxfile.pfx
