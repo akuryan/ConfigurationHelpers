@@ -1,0 +1,76 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+    "webApiVersion": "2016-08-01",
+    "webAppNameTidy": "[tolower(trim(parameters('extension').webAppName))]",
+    "hostnameBingindTidy": "[tolower(trim(parameters('extension').hostnameBinding))]"
+  },
+  "parameters": {
+    "standard": {
+      "type": "secureObject",
+      "defaultValue": {
+        "location": "[resourceGroup().location]"
+      }
+    },
+    "extension": {
+      "type": "secureObject",
+      "defaultValue": {
+        "webAppName": null,
+        "hostnameBinding": null,
+        "sslThumbprint": "default"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[parameters('standard').location]"
+    }
+  },
+  "resources": [
+    {
+        "condition": "[not(equals(parameters('extension').sslThumbprint, 'default'))]",
+        "type": "Microsoft.Web/sites",
+        "name": "[variables('webAppNameTidy')]",
+        "apiVersion": "[variables('webApiVersion')]",
+        "properties": {
+        },
+        "location": "[parameters('location')]",
+        "resources": [
+          {
+            "type": "hostnameBindings",
+            "name": "[variables('hostnameBingindTidy')]",
+            "apiVersion": "2016-08-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sslState":"SniEnabled",
+                "thumbprint":"[parameters('extension').sslThumbprint]"
+              },
+            "dependsOn": [
+              "[resourceId('Microsoft.Web/sites', variables('webAppNameTidy'))]"
+            ]
+          }
+        ]
+      },
+      {
+        "condition": "[equals(parameters('extension').sslThumbprint, 'default')]",
+        "type": "Microsoft.Web/sites",
+        "name": "[variables('webAppNameTidy')]",
+        "apiVersion": "[variables('webApiVersion')]",
+        "properties": {
+        },
+        "location": "[parameters('location')]",
+        "resources": [
+          {
+            "type": "hostnameBindings",
+            "name": "[variables('hostnameBingindTidy')]",
+            "apiVersion": "2016-08-01",
+            "location": "[parameters('location')]",
+            "properties": {},
+            "dependsOn": [
+              "[resourceId('Microsoft.Web/sites', variables('webAppNameTidy'))]"
+            ]
+          }
+        ]
+      }
+  ]
+}
