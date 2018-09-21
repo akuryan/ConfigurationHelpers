@@ -28,7 +28,6 @@
   },
   "resources": [
     {
-        "condition": "[not(equals(parameters('extension').sslThumbprint, 'default'))]",
         "type": "Microsoft.Web/sites",
         "name": "[variables('webAppNameTidy')]",
         "apiVersion": "[variables('webApiVersion')]",
@@ -37,6 +36,7 @@
         "location": "[parameters('location')]",
         "resources": [
           {
+            "condition": "[not(equals(parameters('extension').sslThumbprint, 'default'))]",
             "type": "hostnameBindings",
             "name": "[variables('hostnameBingindTidy')]",
             "apiVersion": "2016-08-01",
@@ -48,19 +48,9 @@
             "dependsOn": [
               "[resourceId('Microsoft.Web/sites', variables('webAppNameTidy'))]"
             ]
-          }
-        ]
-      },
-      {
-        "condition": "[equals(parameters('extension').sslThumbprint, 'default')]",
-        "type": "Microsoft.Web/sites",
-        "name": "[variables('webAppNameTidy')]",
-        "apiVersion": "[variables('webApiVersion')]",
-        "properties": {
-        },
-        "location": "[parameters('location')]",
-        "resources": [
+          },
           {
+            "condition": "[equals(parameters('extension').sslThumbprint, 'default')]",
             "type": "hostnameBindings",
             "name": "[variables('hostnameBingindTidy')]",
             "apiVersion": "2016-08-01",
