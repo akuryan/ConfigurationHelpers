@@ -17,8 +17,7 @@
       "type": "secureObject",
       "defaultValue": {
         "webAppName": null,
-        "hostnameBinding": null,
-        "sslThumbprint": "default"
+        "hostnameBinding": null
       }
     },
     "location": {
@@ -36,21 +35,6 @@
         "location": "[parameters('location')]",
         "resources": [
           {
-            "condition": "[not(equals(parameters('extension').sslThumbprint, 'default'))]",
-            "type": "hostnameBindings",
-            "name": "[variables('hostnameBingindTidy')]",
-            "apiVersion": "2016-08-01",
-            "location": "[parameters('location')]",
-            "properties": {
-                "sslState":"SniEnabled",
-                "thumbprint":"[parameters('extension').sslThumbprint]"
-              },
-            "dependsOn": [
-              "[resourceId('Microsoft.Web/sites', variables('webAppNameTidy'))]"
-            ]
-          },
-          {
-            "condition": "[equals(parameters('extension').sslThumbprint, 'default')]",
             "type": "hostnameBindings",
             "name": "[variables('hostnameBingindTidy')]",
             "apiVersion": "2016-08-01",

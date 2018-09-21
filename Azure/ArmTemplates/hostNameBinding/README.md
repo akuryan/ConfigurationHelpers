@@ -17,7 +17,7 @@ Following snippet add hostname binding with SSL SNI
         "items": [
           {
             "name": "moduleName",
-            "templateLink": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/hostnameBinding.json",
+            "templateLink": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/SNIhostnameBinding.json",
             "parameters": {
               "webAppName" : "[parameters('singleWebAppName')]",
               "hostnameBinding": "hostnameBindingHere",
@@ -38,7 +38,7 @@ Following snippet add hostname binding without SSL
         "items": [
           {
             "name": "moduleName",
-            "templateLink": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/hostnameBinding.json",
+            "templateLink": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/nonSslHostnameBinding.json",
             "parameters": {
               "webAppName" : "[parameters('singleWebAppName')]",
               "hostnameBinding": "hostnameBindingHere"
