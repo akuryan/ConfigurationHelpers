@@ -2,7 +2,7 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "variables": {
-      "webApiVersion": "2016-08-01",
+      "resourcesApiVersion": "2016-09-01",
       "webAppNameTidy": "[tolower(trim(parameters('extension').webAppName))]",
       "hostnameBingindTidy": "[tolower(trim(parameters('extension').hostnameBinding))]"
     },
@@ -28,7 +28,7 @@
     },
     "resources": [
         {
-            "apiVersion": "[variables('webApiVersion')]",
+            "apiVersion": "[variables('resourcesApiVersion')]",
             "name": "SniHostnameBinding",
             "condition": "[not(equals(parameters('extension').sslThumbprint, 'default'))]",
             "type": "Microsoft.Resources/deployments",
@@ -55,7 +55,7 @@
             }
         },
         {
-            "apiVersion": "[variables('webApiVersion')]",
+            "apiVersion": "[variables('resourcesApiVersion')]",
             "name": "nonSslHostnameBinding",
             "condition": "[equals(parameters('extension').sslThumbprint, 'default')]",
             "type": "Microsoft.Resources/deployments",
