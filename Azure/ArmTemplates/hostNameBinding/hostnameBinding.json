@@ -1,0 +1,84 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "variables": {
+      "webApiVersion": "2016-08-01",
+      "webAppNameTidy": "[tolower(trim(parameters('extension').webAppName))]",
+      "hostnameBingindTidy": "[tolower(trim(parameters('extension').hostnameBinding))]"
+    },
+    "parameters": {
+      "standard": {
+        "type": "secureObject",
+        "defaultValue": {
+          "location": "[resourceGroup().location]"
+        }
+      },
+      "extension": {
+        "type": "secureObject",
+        "defaultValue": {
+          "webAppName": null,
+          "hostnameBinding": null,
+          "sslThumbprint": "default"
+        }
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "[parameters('standard').location]"
+      }
+    },
+    "resources": [
+        {
+            "apiVersion": "[variables('webApiVersion')]",
+            "name": "SniHostnameBinding",
+            "condition": "[not(equals(parameters('extension').sslThumbprint, 'default'))]",
+            "type": "Microsoft.Resources/deployments",
+            "properties":
+            {
+              "mode": "Incremental",
+              "templateLink": {
+                "uri": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/SNIhostnameBinding.json"
+              },
+              "parameters": {
+                "standard": {
+                    "value": {
+                        "location": "[parameters('location')]"
+                    }
+                },
+                "extension": {
+                    "value": {
+                        "webAppName": "[variables('webAppNameTidy')]",
+                        "hostnameBinding": "[variables('hostnameBingindTidy')]",
+                        "sslThumbprint": "[parameters('extension').sslThumbprint]"
+                    }
+                }
+              }
+            }
+        },
+        {
+            "apiVersion": "[variables('webApiVersion')]",
+            "name": "nonSslHostnameBinding",
+            "condition": "[equals(parameters('extension').sslThumbprint, 'default')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties":
+            {
+              "mode": "Incremental",
+              "templateLink": {
+                "uri": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/nonSslHostnameBinding.json"
+              },
+              "parameters": {
+                "standard": {
+                    "value": {
+                        "location": "[parameters('location')]"
+                    }
+                },
+                "extension": {
+                    "value": {
+                        "webAppName": "[variables('webAppNameTidy')]",
+                        "hostnameBinding": "[variables('hostnameBingindTidy')]"
+                    }
+                }
+              }
+            }
+        }
+    ]
+  }
