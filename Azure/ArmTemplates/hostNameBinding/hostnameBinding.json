@@ -24,13 +24,17 @@
       "location": {
         "type": "string",
         "defaultValue": "[parameters('standard').location]"
+      },
+      "sslThumbprint": {
+          "type": "string",
+          "defaultValue": "[parameters('extension').sslThumbprint]"
       }
     },
     "resources": [
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
             "name": "SniHostnameBinding",
-            "condition": "[not(equals(parameters('extension').sslThumbprint, 'default'))]",
+            "condition": "[not(equals(parameters('sslThumbprint'), 'default'))]",
             "type": "Microsoft.Resources/deployments",
             "properties":
             {
@@ -48,7 +52,7 @@
                     "value": {
                         "webAppName": "[variables('webAppNameTidy')]",
                         "hostnameBinding": "[variables('hostnameBingindTidy')]",
-                        "sslThumbprint": "[parameters('extension').sslThumbprint]"
+                        "sslThumbprint": "[parameters('sslThumbprint')]"
                     }
                 }
               }
@@ -57,7 +61,7 @@
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
             "name": "nonSslHostnameBinding",
-            "condition": "[equals(parameters('extension').sslThumbprint, 'default')]",
+            "condition": "[equals(parameters('sslThumbprint'), 'default')]",
             "type": "Microsoft.Resources/deployments",
             "properties":
             {
