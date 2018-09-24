@@ -29,7 +29,7 @@ Following snippet adds hostname binding with SSL SNI
     }
 ```
 
-Following snippet adds hostname binding without SSL
+Following snippet adds hostname binding without SSL (pass ```none``` as value for parameter ```sslThumbprint```)
 
 ```json
     "modules": {
@@ -41,7 +41,8 @@ Following snippet adds hostname binding without SSL
             "templateLink": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/hostnameBinding.json",
             "parameters": {
               "webAppName" : "[parameters('singleWebAppName')]",
-              "hostnameBinding": "hostnameBindingHere"
+              "hostnameBinding": "hostnameBindingHere",
+              "sslThumbprint": "none"
             }
           }
         ]

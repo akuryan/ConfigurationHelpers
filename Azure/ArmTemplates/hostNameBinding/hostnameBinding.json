@@ -18,7 +18,7 @@
         "defaultValue": {
           "webAppName": null,
           "hostnameBinding": null,
-          "sslThumbprint": "default"
+          "sslThumbprint": "none"
         }
       },
       "location": {
@@ -34,7 +34,7 @@
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
             "name": "SniHostnameBinding",
-            "condition": "[not(equals(parameters('sslThumbprint'), 'default'))]",
+            "condition": "[not(equals(parameters('sslThumbprint'), 'none'))]",
             "type": "Microsoft.Resources/deployments",
             "properties":
             {
@@ -61,7 +61,7 @@
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
             "name": "nonSslHostnameBinding",
-            "condition": "[equals(parameters('sslThumbprint'), 'default')]",
+            "condition": "[equals(parameters('sslThumbprint'), 'none')]",
             "type": "Microsoft.Resources/deployments",
             "properties":
             {
