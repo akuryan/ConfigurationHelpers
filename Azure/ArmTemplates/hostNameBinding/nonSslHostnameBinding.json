@@ -3,26 +3,19 @@
   "contentVersion": "1.0.0.0",
   "variables": {
     "webApiVersion": "2016-08-01",
-    "webAppNameTidy": "[tolower(trim(parameters('extension').webAppName))]",
-    "hostnameBingindTidy": "[tolower(trim(parameters('extension').hostnameBinding))]"
+    "webAppNameTidy": "[tolower(trim(parameters('webAppName')))]",
+    "hostnameBingindTidy": "[tolower(trim(parameters('hostnameBinding')))]"
   },
   "parameters": {
-    "standard": {
-      "type": "secureObject",
-      "defaultValue": {
-        "location": "[resourceGroup().location]"
-      }
-    },
-    "extension": {
-      "type": "secureObject",
-      "defaultValue": {
-        "webAppName": null,
-        "hostnameBinding": null
-      }
-    },
     "location": {
       "type": "string",
-      "defaultValue": "[parameters('standard').location]"
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "webAppName": {
+      "type": "string"
+    },
+    "hostnameBinding": {
+      "type": "string"
     }
   },
   "resources": [

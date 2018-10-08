@@ -43,18 +43,10 @@
                 "uri": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/SNIhostnameBinding.json"
               },
               "parameters": {
-                "standard": {
-                    "value": {
-                        "location": "[parameters('location')]"
-                    }
-                },
-                "extension": {
-                    "value": {
-                        "webAppName": "[variables('webAppNameTidy')]",
-                        "hostnameBinding": "[variables('hostnameBingindTidy')]",
-                        "sslThumbprint": "[parameters('sslThumbprint')]"
-                    }
-                }
+                "location": {"value": "[parameters('location')]"},
+                "webAppName": {"value": "[variables('webAppNameTidy')]"},
+                "hostnameBinding": {"value":"[variables('hostnameBingindTidy')]"},
+                "sslThumbprint": {"value":"[parameters('sslThumbprint')]"}
               }
             }
         },
@@ -70,17 +62,9 @@
                 "uri": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/nonSslHostnameBinding.json"
               },
               "parameters": {
-                "standard": {
-                    "value": {
-                        "location": "[parameters('location')]"
-                    }
-                },
-                "extension": {
-                    "value": {
-                        "webAppName": "[variables('webAppNameTidy')]",
-                        "hostnameBinding": "[variables('hostnameBingindTidy')]"
-                    }
-                }
+                "location": {"value": "[parameters('location')]"},
+                "webAppName": {"value": "[variables('webAppNameTidy')]"},
+                "hostnameBinding": {"value":"[variables('hostnameBingindTidy')]"}
               }
             }
         }
