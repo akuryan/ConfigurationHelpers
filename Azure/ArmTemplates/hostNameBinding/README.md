@@ -92,3 +92,76 @@ For SSL binding deployment - pass correct certificate thumbprint in parameter ``
   ]
 }
 ```
+
+#### Calling directly
+
+Non-SSL binding
+
+```json
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+  },
+  "parameters": {
+	"location": {
+		"type": "string",
+		"defaultValue": "[resourceGroup().location]"
+      },
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-02-01",
+      "name": "HostnameBinding",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/nonSslHostnameBinding.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "webAppName" : {"value":"webAppNameHere"},
+          "hostnameBinding": {"value":"hostnameBindingHere"}
+        }
+      }
+    }
+  ]
+}
+```
+
+SSL binding
+
+```json
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+  },
+  "parameters": {
+	"location": {
+		"type": "string",
+		"defaultValue": "[resourceGroup().location]"
+      },
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-02-01",
+      "name": "HostnameBinding",
+      "type": "Microsoft.Resources/deployments",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/SNIhostnameBinding.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "webAppName" : {"value":"webAppNameHere"},
+          "hostnameBinding": {"value":"hostnameBindingHere"},
+          "sslThumbprint": {"value":"SSL-THUMBPRINT-HERE"}
+        }
+      }
+    }
+  ]
+}
+```
