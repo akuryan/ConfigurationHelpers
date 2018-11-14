@@ -1,5 +1,6 @@
 Param(
-    [bool]$SitecoreInstall = $false,
+    [bool]$SitecoreSingleInstall = $false,
+    [bool]$SitecoreCDInstall = $false,
     [bool]$XconnectInstall = $false,
     [bool]$solrConfigure = $false,
     [bool]$createCertificate = $false
@@ -23,6 +24,7 @@ $SqlCorePassword = "GeneratePASSWORD"
 $SqlMasterPassword = "GeneratePASSWORD" 
 $SqlWebPassword = "GeneratePASSWORD" 
 $SqlReportingPassword = "GeneratePASSWORD" 
+$SqlCollectionPassword = "GeneratePASSWORD"
 $SqlProcessingPoolsPassword = "GeneratePASSWORD" 
 $SqlProcessingTasksPassword = "GeneratePASSWORD" 
 $SqlReferenceDataPassword = "GeneratePASSWORD" 
@@ -95,7 +97,7 @@ if ($XconnectInstall) {
     Install-SitecoreConfiguration @xconnectParams -Verbose  
 }
 
-if ($SitecoreInstall) {
+if ($SitecoreSingleInstall) {
 	choco install ssdt15 sqlserver-cmdlineutils -y
 	# TODO: IIS Client Certificate Mapping Authentication
     #install sitecore instance 
@@ -132,3 +134,32 @@ if ($SitecoreInstall) {
     Install-SitecoreConfiguration @sitecoreParams 
 }
 
+if ($SitecoreCDInstall) {
+	choco install ssdt15 sqlserver-cmdlineutils -y
+	# TODO: IIS Client Certificate Mapping Authentication
+    #install sitecore instance 
+    $sitecoreParams = 
+    @{     
+        Path = "$PSScriptRoot\sitecore-XP1-cd.json"     
+        Package = "$PSScriptRoot\Sitecore%209.0.2%20rev.%20180604%20(OnPrem)_cd.scwdp"  
+        LicenseFile = "$PSScriptRoot\license.xml"     
+        SqlDbPrefix = $prefix  
+        SqlServer = $SqlServer  
+        SolrCorePrefix = $prefix  
+        SolrUrl = $SolrUrl     
+        XConnectCert = $certThumbprint     
+        Sitename = $sitecoreSiteName         
+        XConnectCollectionService = "https://$XConnectCollectionService"  
+        XConnectReferenceDataService = "https://$XConnectCollectionService"  
+        MarketingAutomationOperationsService = "https://$XConnectCollectionService"  
+        MarketingAutomationReportingService = "https://$XConnectCollectionService"
+        SqlCorePassword = $SqlCorePassword
+        SqlWebPassword = $SqlWebPassword
+        SqlFormsPassword = $SqlFormsPassword
+        SqlExmMasterPassword = $SqlExmMasterPassword 
+        SqlMessagingPassword = $SqlMessagingPassword
+        EXMCryptographicKey = $EXMCryptographicKey
+        EXMAuthenticationKey = $EXMAuthenticationKey
+    } 
+    Install-SitecoreConfiguration @sitecoreParams 
+}
