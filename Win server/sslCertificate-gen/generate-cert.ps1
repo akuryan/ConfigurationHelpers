@@ -98,6 +98,7 @@ $params = @{
     KeyExportPolicy = 'Exportable'
     KeyProtection = 'None'
     Provider = 'Microsoft Enhanced RSA and AES Cryptographic Provider'
+	NotAfter = [DateTime]::Now.AddDays($certificateValidityDays)
 };
 $signedCertificate = New-SelfSignedCertificate @params;
 Write-Host "Generated $signedCertificate"
