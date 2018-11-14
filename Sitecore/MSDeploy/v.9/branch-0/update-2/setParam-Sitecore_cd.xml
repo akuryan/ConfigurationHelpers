@@ -1,0 +1,39 @@
+<parameters>
+	<setParameter name="Application Path" value="#{sitecoreParams.ApplicationPath}#" />
+	<setParameter name="Database Server Name" value="#{sitecoreParams.dbServerName}#" />
+	<setParameter name="Core DB Name" value="#{sitecoreParams.CoreDb.Name}#" />
+	<setParameter name="Web DB Name" value="#{sitecoreParams.WebDb.Name}#" />
+	<setParameter name="Experience Forms DB Name" value="#{sitecoreParams.ExpFormDb.Name}#" />
+	<setParameter name="EXM Master DB Name" value="#{sitecoreParams.ExmMasterDb.Name}#" />
+	<setParameter name="Messaging DB Name" value="#{sitecoreParams.MessagingDb.Name}#" />
+	<setParameter name="Core DB User Name" value="#{sitecoreParams.CoreDb.userName}#" />
+	<setParameter name="Core DB User Password" value="#{sitecoreParams.CoreDb.password}#" />
+	<setParameter name="Web DB User Name" value="#{sitecoreParams.WebDb.userName}#" />
+	<setParameter name="Web DB User Password" value="#{sitecoreParams.WebDb.password}#" />
+	<setParameter name="Experience Forms DB User Name" value="#{sitecoreParams.ExpFormDb.userName}#" />
+	<setParameter name="Experience Forms DB User Password" value="#{sitecoreParams.ExpFormDb.password}#" />
+	<setParameter name="EXM Master DB User Name" value="#{sitecoreParams.ExmMasterDb.userName}#" />
+	<setParameter name="EXM Master DB User Password" value="#{sitecoreParams.ExmMasterDb.password}#" />
+	<setParameter name="Messaging DB User Name" value="#{sitecoreParams.MessagingDb.userName}#" />
+	<setParameter name="Messaging DB User Password" value="#{sitecoreParams.MessagingDb.password}#" />
+
+	<setParameter name="XConnect Collection" value="#{sitecoreParams.xConnect.Collection}#" />
+	<setParameter name="Xdb Reference Data Client" value="#{sitecoreParams.xConnect.refDataClient}#" />
+	<setParameter name="XDB MA Reporting Client" value="#{sitecoreParams.xConnect.maRepClient}#" />
+	<setParameter name="XDB MA Ops Client" value="#{sitecoreParams.xConnect.maOpsClient}#" />
+	<setParameter name="XConnect Server Certificate Validation Thumbprint" value="#{sitecoreParams.xConnect.certThumbprint}#" />
+
+	<setParameter name="EXM Cryptographic Key" value="#{sitecoreParams.EXM.CryptKey}#" />
+	<setParameter name="EXM Authentication Key" value="#{sitecoreParams.EXM.AuthKey}#" />
+
+	<setParameter name="SOLR Connection String" value="#{sitecoreParams.Solr.connectionString}#" />
+	<setParameter name="SOLR Zookeeper Connection String" value="localhost:2181" />
+
+	<setParameter name="Solr Web Index Name" value="#{sitecoreParams.Solr.IndexNames.Web}#" />
+
+	<setParameter name="Solr FXM Web Index Name" value="#{sitecoreParams.Solr.IndexNames.FXM.Web}#" />
+
+	<setParameter name="Solr Marketing Asset Web Index Name" value="#{sitecoreParams.Solr.IndexNames.MA.Web}#" />
+
+	<setParameter name="Solr Marketing Definitions Web Index Name" value="#{sitecoreParams.Solr.IndexNames.MD.Web}#" />
+</parameters>
