@@ -1,0 +1,132 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deploymentId": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]"
+        },
+        "location": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "webAppName": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('deploymentId'),'-addonapp')]"
+        },
+        "webAppSlotName": {
+            "type": "string",
+            "defaultValue": "staging"
+        },        
+        "webFarmName": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('webAppName'),'-hp')]"
+        },
+        "sku":{
+            "type": "string",
+            "defaultValue" : "S1",
+            "metadata": {
+                "description": "The SKU of App Service Plan"
+            }
+        },
+        "siteconfig-use32bitWp": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Defines, if ASP.NET shall use 32 bit process"
+            }
+        },
+        "siteconfig-alwaysOn": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Defines, if worker process shall be always on"
+            }
+        },
+        "siteconfig-phpVersion": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Defines PHP version, if empty - then PHP shall be disabled"
+            }
+        },
+        "deploySlot": {
+            "type": "string",
+            "defaultValue": "yes",
+            "metadata": {
+                "description": "Defines, if we wish to deploy slot"
+            }
+        }
+    },
+    "resources": [
+      {
+        "apiVersion": "2017-08-01",
+        "type": "Microsoft.Web/serverfarms",
+        "kind": "app",
+        "name": "[parameters('webFarmName')]",
+        "location": "[parameters('location')]",
+        "properties": {},
+        "dependsOn": [],
+        "sku": {
+          "name": "[parameters('sku')]"
+        }
+      },
+      {
+        "apiVersion": "2016-08-01",
+        "type": "Microsoft.Web/sites",
+        "kind": "app",
+        "name": "[parameters('webAppName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('webFarmName'))]",
+          "siteConfig": {
+            "use32BitWorkerProcess": "[parameters('siteconfig-use32bitWp')]",
+            "alwaysOn": "[parameters('siteconfig-alwaysOn')]",
+            "webSocketsEnabled": false,
+            "phpVersion": "[parameters('siteconfig-phpVersion')]",
+            "defaultDocuments": [
+              "index.html"
+            ]
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Web/serverfarms', parameters('webFarmName'))]"
+        ],
+        "resources": [
+            {
+              "condition": "[equals(parameters('deploySlot'), 'yes')]",  
+              "name": "[parameters('webAppSlotName')]",
+              "type": "slots",
+              "location": "[parameters('location')]",
+              "apiVersion": "2016-08-01",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
+              ],
+              "properties": {},
+              "resources": [
+                {
+                  "type": "config",
+                  "apiVersion": "2015-08-01",
+                  "name": "web",
+                  "dependsOn": [
+                    "[resourceId('Microsoft.Web/sites/slots', parameters('webAppName'), parameters('webAppSlotName'))]"
+                  ],
+                  "properties": {
+                    "siteConfig": {
+                      "use32BitWorkerProcess": "[parameters('siteconfig-use32bitWp')]",
+                      "alwaysOn": "[parameters('siteconfig-alwaysOn')]",
+                      "webSocketsEnabled": false,
+                      "phpVersion": "[parameters('siteconfig-phpVersion')]",
+                      "defaultDocuments": [
+                        "index.html"
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+      }
+    ]
+  }
