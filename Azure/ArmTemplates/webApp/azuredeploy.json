@@ -57,6 +57,25 @@
             "metadata": {
                 "description": "Defines, if we wish to deploy slot"
             }
+        },
+        "http20State": {
+          "type": "bool",
+          "metadata": {
+            "description": "Defines, if http/2 enabled for web apps"
+          },
+          "defaultValue": true
+        },
+        "minimalTlsVersion": {
+          "type": "string",
+          "metadata": {
+            "description": "Defines minimal TLS version to be used"
+          },
+          "allowedValues": [
+            "1.0",
+            "1.1",
+            "1.2"
+          ],
+          "defaultValue": "1.2"
         }
     },
     "resources": [
@@ -85,6 +104,8 @@
             "alwaysOn": "[parameters('siteconfig-alwaysOn')]",
             "webSocketsEnabled": false,
             "phpVersion": "[parameters('siteconfig-phpVersion')]",
+            "http20Enabled": "[parameters('http20State')]",
+            "minTlsVersion": "[parameters('minimalTlsVersion')]",
             "defaultDocuments": [
               "index.html"
             ]
@@ -118,6 +139,8 @@
                       "alwaysOn": "[parameters('siteconfig-alwaysOn')]",
                       "webSocketsEnabled": false,
                       "phpVersion": "[parameters('siteconfig-phpVersion')]",
+                      "http20Enabled": "[parameters('http20State')]",
+                      "minTlsVersion": "[parameters('minimalTlsVersion')]",
                       "defaultDocuments": [
                         "index.html"
                       ]
