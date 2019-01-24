@@ -1,0 +1,59 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "env": {
+      "value": ""
+    },
+    "consumerName": {
+      "value": ""
+    },
+    "tenantId": {
+      "value": "example-guid"
+    },
+    "accessPolicies": {
+      "value": [
+        {
+          "tenantId": "example-guid",
+          "objectId": "example-guid",
+          "permissions": {
+            "keys": [
+              "all"
+            ],
+            "secrets": [
+              "all"
+            ]
+          }
+        },
+        {
+          "tenantId": "example-guid",
+          "objectId": "example-guid",
+          "permissions": {
+            "keys": [
+              "get",
+              "list"
+            ],
+            "secrets": [
+              "get",
+              "list"
+            ]
+          }
+        }
+      ]
+  },
+  "secretsObject": {
+    "value": {
+      "secrets": [
+        {
+          "secretName": "someSecret1",
+          "secretValue": "secretValue1"
+        },
+        {
+          "secretName": "someSecret2",
+          "secretValue": "secretValue2"
+        }
+      ]
+    }
+    }
+  }
+}
