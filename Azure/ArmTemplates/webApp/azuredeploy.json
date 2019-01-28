@@ -2,44 +2,60 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "deploymentId": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]"
-        },
+      "standard": {
+        "type": "secureObject",
+        "defaultValue": {
+          "location": "[resourceGroup().location]",
+          "deploymentId": "[resourceGroup().name]"
+        }
+      },
+      "extension": {
+        "type": "secureObject",
+        "defaultValue": {
+          "webAppName": "[concat(parameters('standard').deploymentId,'-addonapp')]",
+          "webAppSlotName": "staging",
+          "sku": "S1",
+          "use32bitWp": false,
+          "alwaysOn": true,
+          "deploySlot": "yes",
+          "http20State": true,
+          "minimalTlsVersion": "1.2"
+        }
+      },
         "location": {
             "type": "string",
             "minLength": 1,
-            "defaultValue": "[resourceGroup().location]"
+            "defaultValue": "[parameters('standard').location]"
         },
         "webAppName": {
             "type": "string",
-            "defaultValue": "[concat(parameters('deploymentId'),'-addonapp')]"
+            "defaultValue": "[parameters('extension').webAppName]"
         },
         "webAppSlotName": {
             "type": "string",
-            "defaultValue": "staging"
+            "defaultValue": "[parameters('extension').webAppSlotName]"
         },        
         "webFarmName": {
             "type": "string",
-            "defaultValue": "[concat(parameters('webAppName'),'-hp')]"
+            "defaultValue": "[concat(parameters('extension').webAppName,'-hp')]"
         },
         "sku":{
             "type": "string",
-            "defaultValue" : "S1",
+            "defaultValue": "[parameters('extension').sku]",
             "metadata": {
                 "description": "The SKU of App Service Plan"
             }
         },
         "siteconfig-use32bitWp": {
             "type": "bool",
-            "defaultValue": false,
+            "defaultValue": "[parameters('extension').use32bitWp]",
             "metadata": {
                 "description": "Defines, if ASP.NET shall use 32 bit process"
             }
         },
         "siteconfig-alwaysOn": {
             "type": "bool",
-            "defaultValue": true,
+            "defaultValue": "[parameters('extension').alwaysOn]",
             "metadata": {
                 "description": "Defines, if worker process shall be always on"
             }
@@ -53,7 +69,7 @@
         },
         "deploySlot": {
             "type": "string",
-            "defaultValue": "yes",
+            "defaultValue": "[parameters('extension').deploySlot]",
             "metadata": {
                 "description": "Defines, if we wish to deploy slot"
             }
@@ -63,7 +79,7 @@
           "metadata": {
             "description": "Defines, if http/2 enabled for web apps"
           },
-          "defaultValue": true
+          "defaultValue": "[parameters('extension').http20State]"
         },
         "minimalTlsVersion": {
           "type": "string",
@@ -75,7 +91,7 @@
             "1.1",
             "1.2"
           ],
-          "defaultValue": "1.2"
+          "defaultValue": "[parameters('extension').minimalTlsVersion]"
         }
     },
     "resources": [
