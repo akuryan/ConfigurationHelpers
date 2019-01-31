@@ -1,7 +1,9 @@
 ﻿[CmdletBinding()]
 Param(
   [Parameter(Mandatory=$True)]
-  [string]$PackagesFolder
+  [string]$PackagesFolder,
+  [bool]$removeSensitiveFiles = $true,
+  [bool]$pauseBeforeMsDeploy = $false
 )
 
 
@@ -24,6 +26,19 @@ foreach ($PackagePath in $dirContent | where {$_.FullName.EndsWith($scwdpExtensi
   $zip = [IO.Compression.ZipFile]::OpenRead($PackagePath)
   $zip.Entries | where {$_.Name -eq $paramFileName} | foreach {[System.IO.Compression.ZipFileExtensions]::ExtractToFile($_, $ParamFile, $true)}
   $zip.Dispose()
+
+  if ($removeSensitiveFiles) {
+    #let us do some clean up
+    $filesToRemove = 'Content/Website/Default.aspx', 'Content/Website/default.css', 'Content/Website/default.js';
+    $stream = New-Object IO.FileStream($PackagePath, [IO.FileMode]::Open);
+    $mode   = [IO.Compression.ZipArchiveMode]::Update;
+    $zip    = New-Object IO.Compression.ZipArchive($stream, $mode);
+    #-contains is case-insensitive
+    ($zip.Entries | ? { $filesToRemove -contains $_.FullName }) | % { $_.Delete(); $fullPath = $_.FullName; Write-Host "Deleting $fullPath"; };
+    $zip.Dispose();
+    $stream.Close();
+    $stream.Dispose();
+  }
   
   if(![System.IO.File]::Exists($ParamFile)){
     # file with path $path doesn't exist
@@ -44,6 +59,12 @@ foreach ($PackagePath in $dirContent | where {$_.FullName.EndsWith($scwdpExtensi
      $params = "$params -setParam:`"$paramname`"=`"$tmpvalue`""
   }
   
+  if ($pauseBeforeMsDeploy) {
+    Write-Host -NoNewLine 'Press any key to continue...';
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+  }
+
+
   # create new package
   Invoke-Expression "& '$msdeploy' --% $verb $source $destination $declareParamFile $skipDbFullSQL $skipDbDacFx $params"
 }
