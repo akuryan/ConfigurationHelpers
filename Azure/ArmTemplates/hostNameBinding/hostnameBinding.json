@@ -33,7 +33,7 @@
     "resources": [
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "SniHostnameBinding",
+            "name": "[concat('SniHostnameBinding-',variables('hostnameBingindTidy'))]",
             "condition": "[not(equals(parameters('sslThumbprint'), 'none'))]",
             "type": "Microsoft.Resources/deployments",
             "properties":
@@ -52,7 +52,7 @@
         },
         {
             "apiVersion": "[variables('resourcesApiVersion')]",
-            "name": "nonSslHostnameBinding",
+            "name": "[concat('nonSslHostnameBinding-',variables('hostnameBingindTidy'))]",
             "condition": "[equals(parameters('sslThumbprint'), 'none')]",
             "type": "Microsoft.Resources/deployments",
             "properties":
