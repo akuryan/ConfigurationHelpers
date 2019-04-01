@@ -6,7 +6,8 @@
             "type": "secureObject",
             "defaultValue": {
                 "location": "[resourceGroup().location]",
-                "deploymentId": "[resourceGroup().name]"
+                "deploymentId": "[resourceGroup().name]",
+                "infrastructure": ""
             }
           },
           "extension": {
@@ -20,7 +21,9 @@
                 "letsEncryptClientSecret": "",
                 "storageRgName": "",
                 "storageName": "",
-                "singleDeployment": "yes"
+                "singleDeployment": "yes",
+                "deployStorageConnectionString": true,
+                "nodeJsVersion": ""
             }
           },
           "location": {
@@ -35,6 +38,14 @@
           "deploymentId": {
             "type": "string",
             "defaultValue": "[parameters('standard').deploymentId]"
+          },
+          "authCertificateThumbprint": {
+            "type": "string",
+            "defaultValue": "[parameters('standard').infrastructure.authCertificateThumbprint]"
+          },
+          "nodeJsVersion": {
+            "type": "string",
+            "defaultValue": "[parameters('extension').nodeJsVersion]"
           }
     },
     "variables": {
@@ -84,6 +95,9 @@
                       "[resourceId('Microsoft.Web/sites/slots', variables('webAppNameTidy'), variables('slotNameTidy'))]"
                     ],
                     "properties": {
+                      "WEBSITE_LOAD_CERTIFICATES": "[parameters('authCertificateThumbprint')]",
+                      "WEBSITE_DYNAMIC_CACHE": "0",
+                      "WEBSITE_NODE_DEFAULT_VERSION":"[parameters('nodeJsVersion')]",
                       "letsencrypt:Hostnames": "[variables('letsEncryptHostnames')]",
                       "letsencrypt:Email": "[variables('letsEncryptEmails')]",
                       "letsencrypt:SubscriptionId": "[subscription().subscriptionId]",
@@ -110,6 +124,7 @@
                     }
                   },
                   {
+                    "condition": "[parameters('extension').deployStorageConnectionString]",
                     "apiVersion": "[variables('webApiVersion')]",
                     "type": "config",
                     "name": "connectionstrings",
