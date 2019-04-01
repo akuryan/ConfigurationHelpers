@@ -21,8 +21,8 @@ Following snippet adds hostname binding with SSL SNI
             "templateLink": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/hostnameBinding.json",
             "parameters": {
               "webAppName" : "[parameters('singleWebAppName')]",
-              "hostnameBinding": "hostnameBindingHere",
-              "sslThumbprint": "SSL-THUMBPRINT-HERE"
+              "hostnameBinding": "hostnameBindingHere-0,hostnameBindingHere-1,hostnameBindingHere-2",
+              "sslThumbprint": "SSL-THUMBPRINT-HERE-0,SSL-THUMBPRINT-HERE-1,SSL-THUMBPRINT-HERE-2"
             }
           }
         ]
@@ -42,7 +42,7 @@ Following snippet adds hostname binding without SSL (pass ```none``` as value fo
             "templateLink": "https://raw.githubusercontent.com/akuryan/ConfigurationHelpers/master/Azure/ArmTemplates/hostNameBinding/hostnameBinding.json",
             "parameters": {
               "webAppName" : "[parameters('singleWebAppName')]",
-              "hostnameBinding": "hostnameBindingHere",
+              "hostnameBinding": "hostnameBindingHere-0,hostnameBindingHere-1,hostnameBindingHere-2",
               "sslThumbprint": "none"
             }
           }
@@ -82,8 +82,8 @@ For SSL binding deployment - pass correct certificate thumbprint in parameter ``
 			    "extension": { 
 				    "value": {
               "webAppName" : "webAppNameHere",
-              "hostnameBinding": "hostnameBindingHere",
-              "sslThumbprint": "SSL-THUMBPRINT-HERE"
+              "hostnameBinding": "hostnameBindingHere-0,hostnameBindingHere-1,hostnameBindingHere-2",
+              "sslThumbprint": "SSL-THUMBPRINT-HERE-0,SSL-THUMBPRINT-HERE-1,SSL-THUMBPRINT-HERE-2"
             }
 			    }
         }
@@ -121,8 +121,12 @@ Non-SSL binding
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "webAppName" : {"value":"webAppNameHere"},
-          "hostnameBinding": {"value":"hostnameBindingHere"}
+          "extension": {
+            "value": {
+              "webAppName" : {"value":"webAppNameHere"},
+              "hostnameBinding": {"value":"hostnameBindingHere"}
+            }
+          }
         }
       }
     }
@@ -156,9 +160,13 @@ SSL binding
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "webAppName" : {"value":"webAppNameHere"},
-          "hostnameBinding": {"value":"hostnameBindingHere"},
-          "sslThumbprint": {"value":"SSL-THUMBPRINT-HERE"}
+          "extension": {
+            "value": {
+              "webAppName" : {"value":"webAppNameHere"},
+              "hostnameBinding": {"value":"hostnameBindingHere"},
+              "sslThumbprint": {"value":"SSL-THUMBPRINT-HERE"}
+            }
+          }
         }
       }
     }

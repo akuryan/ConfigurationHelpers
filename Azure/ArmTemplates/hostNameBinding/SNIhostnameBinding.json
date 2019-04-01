@@ -2,7 +2,7 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "variables": {
-    "webApiVersion": "2016-08-01",
+    "webApiVersion": "2018-02-01",
     "webAppNameTidy": "[tolower(trim(parameters('webAppName')))]",
     "hostnameBingindTidy": "[tolower(trim(parameters('hostnameBinding')))]"
   },
@@ -23,27 +23,25 @@
   },
   "resources": [
     {
-        "type": "Microsoft.Web/sites",
-        "name": "[variables('webAppNameTidy')]",
-        "apiVersion": "[variables('webApiVersion')]",
-        "properties": {
-        },
-        "location": "[parameters('location')]",
-        "resources": [
-          {
-            "type": "hostnameBindings",
-            "name": "[variables('hostnameBingindTidy')]",
-            "apiVersion": "2016-08-01",
-            "location": "[parameters('location')]",
-            "properties": {
-                "sslState":"SniEnabled",
-                "thumbprint":"[parameters('sslThumbprint')]"
-              },
-            "dependsOn": [
-              "[resourceId('Microsoft.Web/sites', variables('webAppNameTidy'))]"
-            ]
-          }
-        ]
+      "apiVersion": "[variables('webApiVersion')]",
+      "type": "Microsoft.Web/sites/hostNameBindings",
+      "name": "[concat(variables('webAppNameTidy'),'/', split(variables('hostnameBingindTidy'), ',')[copyIndex()])]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/sites/', variables('webAppNameTidy'))]"
+      ],
+      "properties": {
+        "domainId": null,
+        "hostNameType": "Verified",
+        "siteName": "variables('webAppNameTidy')",
+        "sslState":"SniEnabled",
+        "thumbprint":"[split(parameters('sslThumbprint'), ',')[copyIndex()]]"
+      },
+      "copy": {
+        "name": "hostnameloop",
+        "mode": "serial",
+        "batchSize": 1,
+        "count": "[length(split(variables('hostnameBingindTidy'),','))]"
       }
+    }
   ]
 }
