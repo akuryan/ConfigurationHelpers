@@ -87,13 +87,15 @@ Append to your template modules followind JSON:
 
 and you'll need some parameters as well
 
-```jssAddonTemplatePath``` - string var, shall be different, depending on whether you are deploying for a first time (e.g. you'll need database changes to be introduced) or this is subsequent deployment (so you need to deploy CD JSS package)
+```jssAddonTemplatePath``` - string var, shall be different, depending on whether you are deploying for a first time (e.g. you'll need database changes to be introduced) or this is subsequent deployment (so you need to deploy CD JSS package). For first time deployment could be ```https://github.com/akuryan/ConfigurationHelpers/blob/letsencrypt/Azure/ArmTemplates/Sitecore/jss/jssAddOn.json```; for subsequent one's - ```https://github.com/akuryan/ConfigurationHelpers/blob/master/Azure/ArmTemplates/Sitecore/jss/jssAddOn-no-db.json```
 
-```jssCdAddonTemplatePath``` - string var, URL to no-db template (used for CD deployment)
+```jssCdAddonTemplatePath``` - string var, URL to no-db template (used for CD deployment); could be ```https://github.com/akuryan/ConfigurationHelpers/blob/master/Azure/ArmTemplates/Sitecore/jss/jssAddOn-no-db.json```
 
-```jssCdAddonTemplatePath``` - 
+```jssCdAddonTemplatePath``` - string var, URL to scwdp for JSS CD (so, no DB deployment)
 
 ```jssMsDeployPackageUrl``` - string var, URL to SCWDP; first-time deployments use regular JSS package, subsequent one's - use CD JSS package
+
+```jssWebApp``` - string var, URL to jss web app template. Could be ```https://github.com/akuryan/ConfigurationHelpers/blob/master/Azure/ArmTemplates/Sitecore/jss/node-js-web-app.json```
 
 ```headlessHostingPlanSkuName``` - string var, which SKU should be used for headless JSS web app; P1v2 is safest bet, which gives plenty of resources and do not cost too much. Default value is P1v2
 
