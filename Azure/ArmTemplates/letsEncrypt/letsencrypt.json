@@ -1,0 +1,154 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "standard": {
+            "type": "secureObject",
+            "defaultValue": {
+                "location": "[resourceGroup().location]",
+                "deploymentId": "[resourceGroup().name]",
+                "infrastructure": {
+                  "authCertificateThumbprint": null
+                }
+            }
+          },
+          "extension": {
+            "type": "secureObject",
+            "defaultValue": {
+                "webAppName": "",
+                "stagingSlotName": "",
+                "letsEncryptHostnames": "",
+                "letsEncryptEmails": "",
+                "letsEncryptClientId": "",
+                "letsEncryptClientSecret": "",
+                "storageRgName": "",
+                "storageName": "",
+                "singleDeployment": "yes",
+                "deployStorageConnectionString": true,
+                "nodeJsVersion": ""
+            }
+          },
+          "location": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "[parameters('standard').location]"
+          },
+          "rgName": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().name]"
+          },
+          "deploymentId": {
+            "type": "string",
+            "defaultValue": "[parameters('standard').deploymentId]"
+          },
+          "authCertificateThumbprint": {
+            "type": "string",
+            "defaultValue": "[parameters('standard').infrastructure.authCertificateThumbprint]"
+          },
+          "nodeJsVersion": {
+            "type": "string",
+            "defaultValue": "[parameters('extension').nodeJsVersion]"
+          }
+    },
+    "variables": {
+        "webApiVersion": "2016-08-01",
+        "singleWebAppNameTidy": "[concat(parameters('deploymentId'), '-single')]",
+        "cdWebAppNameTidy": "[concat(parameters('deploymentId'), '-cd')]",
+        "singleStagingSlot": "single-staging",
+        "cdStagingSlot": "cd-staging",
+        "webAppNameDefined": "[not(empty(parameters('extension').webAppName))]",
+        "webAppNameIfNotDefined": "[if(equals(parameters('extension').singleDeployment, 'yes'),variables('singleWebAppNameTidy'), variables('cdWebAppNameTidy'))]",
+        "webAppNameTidy": "[if(variables('webAppNameDefined'),parameters('extension').webAppName,variables('webAppNameIfNotDefined'))]",
+        "slotNameDefined": "[not(empty(parameters('extension').stagingSlotName))]",
+        "slotNameIfNotDefined": "[if(equals(parameters('extension').singleDeployment, 'yes'),variables('singleStagingSlot'), variables('cdStagingSlot'))]",
+        "slotNameTidy": "[if(variables('slotNameDefined'),parameters('extension').stagingSlotName,variables('slotNameIfNotDefined'))]",
+        "letsEncryptHostnames": "[parameters('extension').letsEncryptHostnames]",
+        "letsEncryptEmails": "[parameters('extension').letsEncryptEmails]",
+        "letsEncryptClientId": "[parameters('extension').letsEncryptClientId]",
+        "letsEncryptClientSecret": "[parameters('extension').letsEncryptClientSecret]",
+        "storageAccountResourceGroupName": "[parameters('extension').storageRgName]",
+        "storageName": "[parameters('extension').storageName]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "name": "[variables('webAppNameTidy')]",
+            "apiVersion": "[variables('webApiVersion')]",
+            "properties": {
+            },
+            "location": "[parameters('location')]",
+            "resources": [
+              {
+                "type": "slots",
+                "name": "[variables('slotNameTidy')]",
+                "apiVersion": "[variables('webApiVersion')]",
+                "dependsOn": [
+                  "[resourceId('Microsoft.Web/sites', variables('webAppNameTidy'))]"
+                ],
+                "properties": {
+                },
+                "location": "[parameters('location')]",
+                "resources": [
+                  {
+                    "apiVersion": "[variables('webApiVersion')]",
+                    "name": "appsettings",
+                    "type": "config",
+                    "dependsOn": [
+                      "[resourceId('Microsoft.Web/sites/slots', variables('webAppNameTidy'), variables('slotNameTidy'))]"
+                    ],
+                    "properties": {
+                      "WEBSITE_LOAD_CERTIFICATES": "[parameters('authCertificateThumbprint')]",
+                      "WEBSITE_DYNAMIC_CACHE": "0",
+                      "WEBSITE_NODE_DEFAULT_VERSION":"[parameters('nodeJsVersion')]",
+                      "letsencrypt:Hostnames": "[variables('letsEncryptHostnames')]",
+                      "letsencrypt:Email": "[variables('letsEncryptEmails')]",
+                      "letsencrypt:SubscriptionId": "[subscription().subscriptionId]",
+                      "letsencrypt:Tenant": "[subscription().tenantId]",
+                      "letsencrypt:ClientId": "[variables('letsEncryptClientId')]",
+                      "letsencrypt:ClientSecret": "[variables('letsEncryptClientSecret')]",
+                      "letsencrypt:ResourceGroupName": "[parameters('rgName')]",
+                      "letsencrypt:ServicePlanResourceGroupName": "[parameters('rgName')]",
+                      "letsencrypt:SiteSlot": "",
+                      "letsencrypt:UseIPBasedSSL": "false",
+                      "letsencrypt:AcmeBaseUri": "https://acme-v01.api.letsencrypt.org/"
+                    }
+                  },
+                  {
+                    "apiVersion": "[variables('webApiVersion')]",
+                    "name": "letsencrypt",
+                    "type": "siteextensions",
+                    "dependsOn": [
+                      "[concat('Microsoft.Web/Sites/', variables('webAppNameTidy'), '/slots/', variables('slotNameTidy'), '/config/appsettings')]",
+                      "[resourceId('Microsoft.Web/sites/slots', variables('webAppNameTidy'), variables('slotNameTidy'))]"
+                    ],
+                    "properties": {
+                      "test": "key1"
+                    }
+                  },
+                  {
+                    "condition": "[parameters('extension').deployStorageConnectionString]",
+                    "apiVersion": "[variables('webApiVersion')]",
+                    "type": "config",
+                    "name": "connectionstrings",
+                    "dependsOn": [ 
+                      "[resourceId('Microsoft.Web/Sites', variables('webAppNameTidy'))]",
+                      "[resourceId('Microsoft.Web/sites/slots', variables('webAppNameTidy'), variables('slotNameTidy'))]",
+                      "[concat('Microsoft.Web/Sites/', variables('webAppNameTidy'), '/slots/', variables('slotNameTidy'), '/config/appsettings')]"
+                    ],
+                    "properties": {
+                      "AzureWebJobsStorage": {
+                        "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId(variables('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts', variables('storageName')),  '2015-06-15').key1,';')]",
+                        "type": "Custom"
+                      },
+                      "AzureWebJobsDashboard": {
+                        "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId(variables('storageAccountResourceGroupName'),'Microsoft.Storage/storageAccounts', variables('storageName')),  '2015-06-15').key1,';')]",
+                        "type": "Custom"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+    ]
+}
