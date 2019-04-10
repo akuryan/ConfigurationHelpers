@@ -7,7 +7,9 @@
             "defaultValue": {
                 "location": "[resourceGroup().location]",
                 "deploymentId": "[resourceGroup().name]",
-                "infrastructure": ""
+                "infrastructure": {
+                  "authCertificateThumbprint": null
+                }
             }
           },
           "extension": {
