@@ -1,0 +1,199 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "variables": {
+        "serverFarmApiVersion": "2016-09-01",
+        "webApiVersion": "2016-08-01",
+        "hostingPlanNameTidy": "[toLower(trim(parameters('hostingPlanName')))]",
+        "webAppNameTidy": "[toLower(trim(parameters('webAppName')))]",
+        "slotNameTidy": "[toLower(trim(parameters('slotName')))]"
+    },
+    "parameters": {
+        "standard": {
+            "type": "secureObject",
+            "defaultValue": {
+              "deploymentId": null,
+              "location": null       
+            }
+          },
+          "extension": {
+            "type": "secureObject",
+            "defaultValue": {
+                "hostingPlanSkuName": "P1v2",
+                "hostingPlanSkuCapacity": 1,
+                "http20State": true,
+                "minimalTlsVersion": "1.2",
+                "nodeJsVersion": "8.11.1",
+                "cdWebAppName": "",
+                "cdWebAppSlotName": ""
+            }
+        },  
+        "deploymentId": {
+            "type": "string",
+            "defaultValue": "[coalesce(parameters('standard').deploymentId, resourceGroup().name)]"
+        },
+        "location": {
+            "type": "string",
+            "minLength": 1,
+            "defaultValue": "[coalesce(parameters('standard').location, resourceGroup().location)]"
+        },
+        "hostingPlanName": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('deploymentId'), '-nodejs-hp')]"
+        },
+        "webAppName": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('deploymentId'), '-nodejs-app')]"
+        },
+        "slotName": {
+            "type": "string",
+            "defaultValue": "js-staging"
+        },
+        "hostingPlanSkuName": {
+            "type": "string",
+            "defaultValue": "[parameters('extension').hostingPlanSkuName]"
+        },
+        "hostingPlanSkuCapacity": {
+            "type": "int",
+            "defaultValue": "[parameters('extension').hostingPlanSkuCapacity]"
+        },
+        "http20State": {
+            "type": "bool",
+            "defaultValue": "[parameters('extension').http20State]"
+        },
+        "minimalTlsVersion": {
+            "type": "string",
+            "defaultValue": "[parameters('extension').minimalTlsVersion]"
+        },
+        "nodeJsVersion": {
+            "type": "string",
+            "defaultValue": "[parameters('extension').nodeJsVersion]"
+        },
+        "cdWebAppName": {
+          "type": "string",
+          "defaultValue": "[parameters('extension').cdWebAppName]",
+          "metadata": {
+            "description": "Content Delivery web app name - will be used as source for headless JSS web app"
+          }
+        },
+        "cdWebAppSlotName": {
+          "type": "string",
+          "defaultValue": "[parameters('extension').cdWebAppSlotName]",
+          "metadata": {
+            "description": "Content Delivery web app slot name - will be used as source for headless JSS web app"
+          }
+        }        
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "name": "[variables('hostingPlanNameTidy')]",
+            "apiVersion": "[variables('serverFarmApiVersion')]",
+            "sku": {
+              "name": "[parameters('hostingPlanSkuName')]",
+              "capacity": "[parameters('hostingPlanSkuCapacity')]"
+            },
+            "properties": {
+              "name": "[variables('hostingPlanNameTidy')]"
+            },
+            "location": "[parameters('location')]"
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "name": "[variables('webAppNameTidy')]",
+            "apiVersion": "[variables('webApiVersion')]",
+            "properties": {
+              "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanNameTidy'))]",
+              "siteConfig": {
+                "use32BitWorkerProcess": false,
+                "alwaysOn": true,
+                "webSocketsEnabled": false,
+                "phpVersion": "",
+                "http20Enabled": "[parameters('http20State')]",
+                "minTlsVersion": "[parameters('minimalTlsVersion')]",
+                "ftpsState": "FtpsOnly",
+                "defaultDocuments": [
+                  "index.js"
+                ]
+              }
+            },
+            "location": "[parameters('location')]",
+            "dependsOn": [
+              "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanNameTidy'))]"
+            ],
+            "resources": [
+              {
+                "apiVersion": "[variables('webApiVersion')]",
+                "type": "config",
+                "name": "appsettings",
+                "dependsOn": [
+                  "[resourceId('Microsoft.Web/sites', variables('webAppNameTidy'))]"
+                ],
+                "properties": {
+                    "WEBSITE_NODE_DEFAULT_VERSION":"[parameters('nodeJsVersion')]",
+                    "apiHost": "[concat('https://', reference(concat('Microsoft.Web/sites/', parameters('cdWebAppName')), variables('webApiVersion')).defaultHostName)]"
+                }
+              },
+              {
+                "apiVersion": "[variables('webApiVersion')]",
+                "name": "slotconfignames",
+                "type": "config",
+                "dependsOn": [
+                  "[resourceId('Microsoft.Web/sites', variables('webAppNameTidy'))]"
+                ],
+                "properties": {
+                  "appSettingNames": [ 
+                    "apiHost"
+                   ]
+                }
+              },              
+              {
+                "name": "[variables('slotNameTidy')]",
+                "type": "slots",
+                "location": "[resourceGroup().location]",
+                "apiVersion": "2015-08-01",
+                "dependsOn": [
+                  "[resourceId('Microsoft.Web/sites', variables('webAppNameTidy'))]"
+                ],
+                "properties": {},
+                "resources": [
+                  {
+                    "type": "config",
+                    "apiVersion": "[variables('webApiVersion')]",
+                    "name": "web",
+                    "dependsOn": [
+                      "[resourceId('Microsoft.Web/sites/slots', variables('webAppNameTidy'), variables('slotNameTidy'))]"
+                    ],
+                    "properties": {
+                      "siteConfig": {
+                        "use32BitWorkerProcess": false,
+                        "alwaysOn": true,
+                        "webSocketsEnabled": false,
+                        "phpVersion": "",
+                        "http20Enabled": "[parameters('http20State')]",
+                        "minTlsVersion": "[parameters('minimalTlsVersion')]",
+                        "ftpsState": "FtpsOnly",
+                        "defaultDocuments": [
+                          "index.html"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "apiVersion": "[variables('webApiVersion')]",
+                    "type": "config",
+                    "name": "appsettings",
+                    "dependsOn": [
+                      "[resourceId('Microsoft.Web/sites/slots', variables('webAppNameTidy'), variables('slotNameTidy'))]"
+                    ],
+                    "properties": {
+                        "WEBSITE_NODE_DEFAULT_VERSION":"[parameters('nodeJsVersion')]",
+                        "apiHost": "[concat('https://', reference(concat('Microsoft.Web/sites/', parameters('cdWebAppName'),'/slots/', parameters('cdWebAppSlotName')), variables('webApiVersion')).defaultHostName)]"
+                    }
+                  }
+                ]
+              }
+            ]      
+        }
+    ]
+}
