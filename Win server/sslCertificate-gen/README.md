@@ -8,6 +8,8 @@ Feel free to send me Pull Requests to update my work.
 
 ## Usage
 
+Execute in Administrator powershell console, as it requires to create a trusted signing certificate at local machine store.
+
 ```powershell
 .\generate-cert.ps1 -dnsNames "*.dev.local,test.local,user.local,whatever.local"
 ```
