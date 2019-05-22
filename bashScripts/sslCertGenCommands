@@ -6,3 +6,5 @@ openssl req -new -sha256 -key keyfile.key -out csrfile.csr
 openssl pkcs7 -print_certs -in p7bfile.p7b -out certificate.cer
 #generate pfx
 openssl pkcs12 -export -in certificate.cer -inkey keyfile.key -out pfxfile.pfx
+#get cer from PFX
+openssl pkcs12 -in [yourfile.pfx] -clcerts -nokeys -out [certificate.crt]
