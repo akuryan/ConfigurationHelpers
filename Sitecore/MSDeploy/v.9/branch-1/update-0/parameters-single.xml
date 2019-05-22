@@ -1,0 +1,80 @@
+<parameters>
+	<setParameter name="Application Path" value="#{sitecoreParams.ApplicationPath}#" />
+	<setParameter name="Sitecore Admin New Password" value="#{sitecoreParams.AdminPassword}#" />
+	<setParameter name="Database Server Name" value="#{sitecoreParams.dbServerName}#" />
+	<setParameter name="Database Admin User Name" value="#{sitecoreParams.DbAdminUser}#" />
+	<setParameter name="Database Admin User Password" value="#{sitecoreParams.DbAdminPassword}#" />
+	<setParameter name="Core DB Name" value="#{sitecoreParams.CoreDb.Name}#" />
+	<setParameter name="Security DB Name" value="#{sitecoreParams.CoreDb.Name}#" />
+	<setParameter name="Master DB Name" value="#{sitecoreParams.MasterDb.Name}#" />
+	<setParameter name="Web DB Name" value="#{sitecoreParams.WebDb.Name}#" />
+	<setParameter name="Reporting DB Name" value="#{sitecoreParams.ReportingDb.Name}#" />
+	<setParameter name="XDB Reference Data DB Name" value="#{sitecoreParams.RefDataDb.Name}#" />
+	<setParameter name="Experience Forms DB Name" value="#{sitecoreParams.ExpFormDb.Name}#" />
+	<setParameter name="EXM Master DB Name" value="#{sitecoreParams.ExmMasterDb.Name}#" />
+	<setParameter name="Marketing Automation DB Name" value="#{sitecoreParams.MADb.Name}#" />
+	<setParameter name="Processing Pools DB Name" value="#{sitecoreParams.ProcPoolsDb.Name}#" />
+	<setParameter name="Processing Tasks DB Name" value="#{sitecoreParams.ProcTasksDb.Name}#" />
+	<setParameter name="Messaging DB Name" value="#{sitecoreParams.MessagingDb.Name}#" />
+
+	<setParameter name="Core DB User Name" value="#{sitecoreParams.CoreDb.userName}#" />
+	<setParameter name="Core DB User Password" value="#{sitecoreParams.CoreDb.password}#" />
+	<setParameter name="Security DB User Name" value="#{sitecoreParams.CoreDb.userName}#" />
+	<setParameter name="Security DB User Password" value="#{sitecoreParams.CoreDb.password}#" />
+	<setParameter name="Master DB User Name" value="#{sitecoreParams.MasterDb.userName}#" />
+	<setParameter name="Master DB User Password" value="#{sitecoreParams.MasterDb.password}#" />
+	<setParameter name="Web DB User Name" value="#{sitecoreParams.WebDb.userName}#" />
+	<setParameter name="Web DB User Password" value="#{sitecoreParams.WebDb.password}#" />
+	<setParameter name="Reporting DB User Name" value="#{sitecoreParams.ReportingDb.userName}#" />
+	<setParameter name="Reporting DB User Password" value="#{sitecoreParams.ReportingDb.password}#" />
+	<setParameter name="XDB Reference Data DB User Name" value="#{sitecoreParams.RefData.userName}#" />
+	<setParameter name="XDB Reference Data DB User Password" value="#{sitecoreParams.RefData.password}#" />
+	<setParameter name="Experience Forms DB User Name" value="#{sitecoreParams.ExpFormDb.userName}#" />
+	<setParameter name="Experience Forms DB User Password" value="#{sitecoreParams.ExpFormDb.password}#" />
+	<setParameter name="EXM Master DB User Name" value="#{sitecoreParams.ExmMasterDb.userName}#" />
+	<setParameter name="EXM Master DB User Password" value="#{sitecoreParams.ExmMasterDb.password}#" />
+	<setParameter name="Marketing Automation DB User Name" value="#{sitecoreParams.MADb.userName}#" />
+	<setParameter name="Marketing Automation DB User Password" value="#{sitecoreParams.MADb.password}#" />
+
+	<setParameter name="Processing Pools DB User Name" value="#{sitecoreParams.ProcPoolsDb.userName}#" />
+	<setParameter name="Processing Pools DB User Password" value="#{sitecoreParams.ProcPoolsDb.password}#" />
+
+	<setParameter name="Processing Tasks DB User Name" value="#{sitecoreParams.ProcTasksDb.userName}#" />
+	<setParameter name="Processing Tasks DB User Password" value="#{sitecoreParams.ProcTasksDb.password}#" />
+
+	<setParameter name="Messaging DB User Name" value="#{sitecoreParams.MessagingDb.userName}#" />
+	<setParameter name="Messaging DB User Password" value="#{sitecoreParams.MessagingDb.password}#" />
+
+	<setParameter name="SOLR Connection String" value="#{sitecoreParams.Solr.connectionString}#" />
+	<setParameter name="XConnect Collection" value="#{sitecoreParams.xConnect.Collection}#" />
+	<setParameter name="Xdb Reference Data Client" value="#{sitecoreParams.xConnect.refDataClient}#" />
+	<setParameter name="XDB MA Reporting Client" value="#{sitecoreParams.xConnect.maRepClient}#" />
+	<setParameter name="XDB MA Ops Client" value="#{sitecoreParams.xConnect.maOpsClient}#" />
+	<setParameter name="Cortex Reporting Client" value="#{sitecoreParams.xConnect.Collection}#" />
+	<setParameter name="XConnect Server Certificate Validation Thumbprint" value="#{sitecoreParams.xConnect.certThumbprint}#" />
+
+	<setParameter name="EXM EDS Provider" value="#{sitecoreParams.EDS.Provider}#" />
+	<setParameter name="EXM Cryptographic Key" value="#{sitecoreParams.EXM.CryptKey}#" />
+	<setParameter name="EXM Authentication Key" value="#{sitecoreParams.EXM.AuthKey}#" />
+	<setParameter name="Solr Core Index Name" value="#{sitecoreParams.Solr.IndexNames.Core}#" />
+	<setParameter name="Solr Master Index Name" value="#{sitecoreParams.Solr.IndexNames.Master}#" />
+	<setParameter name="Solr Web Index Name" value="#{sitecoreParams.Solr.IndexNames.Web}#" />
+
+	<setParameter name="Solr Testing Index Name" value="#{sitecoreParams.Solr.IndexNames.Testing}#" />
+	<setParameter name="Solr Suggested Index Name" value="#{sitecoreParams.Solr.IndexNames.SuggestedTest}#" />
+
+	<setParameter name="Solr FXM Master Index Name" value="#{sitecoreParams.Solr.IndexNames.FXM.Master}#" />
+	<setParameter name="Solr FXM Web Index Name" value="#{sitecoreParams.Solr.IndexNames.FXM.Web}#" />
+
+	<setParameter name="Solr Marketing Asset Master Index Name" value="#{sitecoreParams.Solr.IndexNames.MA.Master}#" />
+	<setParameter name="Solr Marketing Asset Web Index Name" value="#{sitecoreParams.Solr.IndexNames.MA.Web}#" />
+
+	<setParameter name="Solr Marketing Definitions Master Index Name" value="#{sitecoreParams.Solr.IndexNames.MD.Master}#" />
+	<setParameter name="Solr Marketing Definitions Web Index Name" value="#{sitecoreParams.Solr.IndexNames.MD.Web}#" />
+   
+	<setParameter name="Telerik Encryption Key" value="#{sitecoreParams.TelerikKey}#" />
+	
+ 	<setParameter name="Sitecore Identity Secret" value="#{sitecoreParams.IdentitySecret}#" />
+
+ 	<setParameter name="Sitecore Identity Authority" value="#{sitecoreParams.IdentityAuthority}#" />
+</parameters>
