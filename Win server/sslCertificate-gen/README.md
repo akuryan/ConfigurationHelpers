@@ -17,3 +17,19 @@ Execute in Administrator powershell console, as it requires to create a trusted 
 ## Explanation
 
 It will create root certificate for signing in ```LocalMachine/My``` with private key, export it and import it without private key to ```LocalMachine/Root```; after it - new certificate will be created and signed by signing certificate. Signing certificate will be stored for further reusage.
+
+## Exporting created certificate for reuse with SOLR
+
+```powershell
+$mypwd = ConvertTo-SecureString -String "1234" -Force -AsPlainText
+Get-ChildItem -Path cert:\localMachine\my\ThumbprintOfCertificate | Export-PfxCertificate -FilePath C:\mypfx.pfx -Password $mypwd
+```
+
+To convert PFX to JKS (for SOLR) I used [this guide](https://dzone.com/articles/convert-pfx-certificate-to-jks-p12-crt)
+
+```bash
+openssl pkcs12 -in C:\mypfx.pfx -nocerts -out c:\mypfx.key
+openssl pkcs12 -in C:\mypfx.pfx -clcerts -nokeys -out c:\mypfx.crt  
+openssl pkcs12 -export -in c:\mypfx.crt -inkey c:\mypfx.key -certfile c:\mypfx.crt -name "examplecert" -out c:\mypfx.p12
+keytool -importkeystore -srckeystore c:\mypfx.p12 -srcstoretype pkcs12 -destkeystore c:\mypfx.jks -deststoretype JKS
+```
