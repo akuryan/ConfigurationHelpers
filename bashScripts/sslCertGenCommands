@@ -8,3 +8,6 @@ openssl pkcs7 -print_certs -in p7bfile.p7b -out certificate.cer
 openssl pkcs12 -export -in certificate.cer -inkey keyfile.key -out pfxfile.pfx
 #get cer from PFX
 openssl pkcs12 -in [yourfile.pfx] -clcerts -nokeys -out [certificate.crt]
+#get key from PFX
+openssl pkcs12 -in [yourfile.pfx]  -nocerts -out key.pem
+openssl rsa -in key.pem -out [file2.key] 
