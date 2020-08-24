@@ -77,13 +77,13 @@ wmic path Win32_UserAccount where Name='WDeployConfigWriter' set PasswordExpires
 REM Adding compression to logs folder
 compact /c /s /a /i /f /q C:\inetpub\logs\
 
-REM Set updates to be only downloaded
+REM Set updates to be only downloaded; should be installed manually
 net stop wuauserv
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 3 /f
 net start wuauserv
 
-::Disable SSLv3
-regedit /s %~dp0\SSLFixes.reg
+::Set perfect forward secrecy
+@powershell -NoProfile -ExecutionPolicy unrestricted %~dp0\PerfectSecrecy.ps1
 ::Generate password for deployment_user if not defined
 echo off
 VERIFY OTHER 2>nul
@@ -105,3 +105,5 @@ REM TODO: Configure deployment for unplrivileged user
 REM http://www.iis.net/learn/publish/using-web-deploy/powershell-scripts-for-automating-web-deploy-setup
 REM http://www.iis.net/learn/publish/using-web-deploy/web-deploy-powershell-cmdlets
 REM Of by script c:\Program Files\IIS\Microsoft Web Deploy V3\Scripts\SetupSiteForPublish.ps1
+echo Please, reboot computer after configuration finished
+pause
