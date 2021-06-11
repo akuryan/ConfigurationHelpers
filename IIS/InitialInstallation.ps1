@@ -19,3 +19,6 @@ Set-Service -Name WMSvc -StartupType Automatic
 if((Get-Service WMSvc).Status -ne 'Running') { 
     Start-Service WMSvc
 }
+
+# Install chocolatey
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
