@@ -58,8 +58,8 @@ C:\Windows\Microsoft.NET\Framework64\v2.0.50727\aspnet_regiis.exe -iru
 C:\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_regiis.exe -iru
 
 REM Install notepad++
-choco install notepadplusplus webpi webpicmd git -y --allow-empty-checksums
-webpicmd /Install /Products:UrlRewrite2,WDeploy36PS /AcceptEULA
+choco install notepadplusplus webpi git -y --allow-empty-checksums
+"C:\Program Files\Microsoft\Web Platform Installer\webpicmd" /Install /Products:UrlRewrite2,WDeploy36PS /AcceptEULA
 REM You can search webpicmd in powershell for required ' webpicmd /List /ListOption:All | select-string -pattern "rewrite" '
 
 REM choco list --source webpi -- can be used to locate required packages in future, as soon as webpi source will be implemented (described at https://github.com/chocolatey/choco/wiki/CommandsList)
