@@ -1,0 +1,3 @@
+# One regex per line, matched (case-insensitive) against the process name and the command line.
+# A matching process is never killed by Reap-ClaudeOrphans.ps1, nor are its children.
+^claude\.exe$
